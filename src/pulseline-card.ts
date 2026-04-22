@@ -143,7 +143,7 @@ export class PulseLineCard extends LitElement {
     if (!entity) {
       return html`
         <ha-card>
-          <div class="card-content">
+          <div class="content">
             <div class="not-found">Entity not found: ${this._config.entity}</div>
           </div>
         </ha-card>
@@ -156,7 +156,7 @@ export class PulseLineCard extends LitElement {
 
     return html`
       <ha-card>
-        <div class="card-content">
+        <div class="content">
           <div
             class="icon-badge"
             style="background: ${accent}33; color: ${accent};"
@@ -179,11 +179,11 @@ export class PulseLineCard extends LitElement {
         display: block;
       }
       ha-card {
-        padding: 8px 10px;
+        padding: 6px 10px;
         overflow: hidden;
         box-sizing: border-box;
       }
-      .card-content {
+      .content {
         display: flex;
         flex-direction: row;
         align-items: flex-start;

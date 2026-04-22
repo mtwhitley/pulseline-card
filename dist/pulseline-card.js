@@ -48,13 +48,13 @@ const ct={attribute:!0,type:String,converter:m,reflect:!1,hasChanged:v},lt=(t=ct
       </div>
     `}_renderSupportingRow(t){const e=this._config.supporting_row;if(!e||"none"===e.type)return W;if("kudos"===e.type&&e.kudos_rules){const s=parseFloat(t.state);if(isNaN(s))return W;const i=this._evaluateKudos(s,e.kudos_rules);return i?q`<div class="supporting-row">${i}</div>`:W}return W}render(){if(!this._config||!this.hass)return q``;const t=this._getEntity();if(!t)return q`
         <ha-card>
-          <div class="card-content">
+          <div class="content">
             <div class="not-found">Entity not found: ${this._config.entity}</div>
           </div>
         </ha-card>
       `;const e=this._getAccentColor(),s=this._getIcon(t),i=this._getTitle(t);return q`
       <ha-card>
-        <div class="card-content">
+        <div class="content">
           <div
             class="icon-badge"
             style="background: ${e}33; color: ${e};"
@@ -73,11 +73,11 @@ const ct={attribute:!0,type:String,converter:m,reflect:!1,hasChanged:v},lt=(t=ct
         display: block;
       }
       ha-card {
-        padding: 8px 10px;
+        padding: 6px 10px;
         overflow: hidden;
         box-sizing: border-box;
       }
-      .card-content {
+      .content {
         display: flex;
         flex-direction: row;
         align-items: flex-start;
