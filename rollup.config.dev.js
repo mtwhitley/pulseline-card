@@ -1,0 +1,14 @@
+import resolve from "@rollup/plugin-node-resolve";
+import typescript from "@rollup/plugin-typescript";
+
+export default {
+  input: "src/pulseline-card.ts",
+  output: {
+    file: "dist/pulseline-card.js",
+    format: "es",
+  },
+  plugins: [
+    resolve(),
+    typescript(),
+  ],
+};
