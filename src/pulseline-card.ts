@@ -101,21 +101,11 @@ export class PulseLineCard extends LitElement {
   }
 
   private _computeRowSize(): number {
-    const footer = this._config?.footer_row;
-    const supporting = this._config?.supporting_row;
-    const footerType = footer?.type ?? "none";
-
+    const footerType = this._config?.footer_row?.type ?? "none";
     if (footerType === "recent_days_sparkline" || footerType === "recent_values_sparkline") {
       return 3;
     }
-    if (footerType === "progress_bar") {
-      return 2;
-    }
-    // No footer
-    if (supporting && supporting.type !== "none") {
-      return 2;
-    }
-    return 1;
+    return 2;
   }
 
   public getCardSize(): number {
