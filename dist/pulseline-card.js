@@ -70,7 +70,7 @@ const ct={attribute:!0,type:String,converter:m,reflect:!1,hasChanged:v},lt=(t=ct
       </ha-card>
     `}static get styles(){return n`
       ha-card {
-        padding: 14px 16px;
+        padding: 12px 16px;
         overflow: hidden;
       }
       .card-content {
@@ -81,16 +81,15 @@ const ct={attribute:!0,type:String,converter:m,reflect:!1,hasChanged:v},lt=(t=ct
       }
       .icon-badge {
         flex-shrink: 0;
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-top: 1px;
       }
       .icon-badge ha-icon {
-        --mdc-icon-size: 20px;
+        --mdc-icon-size: 22px;
       }
       .text-block {
         display: flex;
@@ -98,8 +97,8 @@ const ct={attribute:!0,type:String,converter:m,reflect:!1,hasChanged:v},lt=(t=ct
         min-width: 0;
       }
       .title-row {
-        font-size: 15px;
-        font-weight: 600;
+        font-size: 14px;
+        font-weight: 500;
         color: var(--primary-text-color);
         line-height: 1.2;
         overflow: hidden;
@@ -112,7 +111,7 @@ const ct={attribute:!0,type:String,converter:m,reflect:!1,hasChanged:v},lt=(t=ct
         margin-top: 2px;
       }
       .value {
-        font-size: 30px;
+        font-size: 32px;
         font-weight: 700;
         color: var(--primary-text-color);
         line-height: 1.15;
@@ -124,16 +123,17 @@ const ct={attribute:!0,type:String,converter:m,reflect:!1,hasChanged:v},lt=(t=ct
         margin-left: 5px;
       }
       .score-max {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 400;
         color: var(--secondary-text-color);
-        margin-left: 2px;
+        margin-left: 6px;
+        opacity: 0.7;
       }
       .supporting-row {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 500;
         color: var(--secondary-text-color);
-        margin-top: 4px;
+        margin-top: 2px;
         line-height: 1.2;
       }
       .not-found {
