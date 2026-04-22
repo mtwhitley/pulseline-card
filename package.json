@@ -1,6 +1,6 @@
 {
   "name": "pulseline-card",
-  "version": "0.0.1",
+  "version": "0.1.0-dev.1",
   "description": "A compact metric + trend card for Home Assistant",
   "type": "module",
   "main": "dist/pulseline-card.js",
