@@ -176,14 +176,14 @@ export class PulseLineCard extends LitElement {
   static get styles(): CSSResultGroup {
     return css`
       ha-card {
-        padding: 12px 16px;
+        padding: 10px 14px;
         overflow: hidden;
       }
       .card-content {
         display: flex;
         flex-direction: row;
         align-items: flex-start;
-        gap: 12px;
+        gap: 14px;
       }
       .icon-badge {
         flex-shrink: 0;
@@ -214,7 +214,7 @@ export class PulseLineCard extends LitElement {
       .value-row {
         display: flex;
         align-items: baseline;
-        margin-top: 2px;
+        margin-top: 4px;
       }
       .value {
         font-size: 32px;
@@ -239,7 +239,7 @@ export class PulseLineCard extends LitElement {
         font-size: 13px;
         font-weight: 500;
         color: var(--secondary-text-color);
-        margin-top: 2px;
+        margin-top: 4px;
         line-height: 1.2;
       }
       .not-found {

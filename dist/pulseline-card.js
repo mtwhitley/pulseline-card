@@ -70,14 +70,14 @@ const ct={attribute:!0,type:String,converter:m,reflect:!1,hasChanged:v},lt=(t=ct
       </ha-card>
     `}static get styles(){return n`
       ha-card {
-        padding: 12px 16px;
+        padding: 10px 14px;
         overflow: hidden;
       }
       .card-content {
         display: flex;
         flex-direction: row;
         align-items: flex-start;
-        gap: 12px;
+        gap: 14px;
       }
       .icon-badge {
         flex-shrink: 0;
@@ -108,7 +108,7 @@ const ct={attribute:!0,type:String,converter:m,reflect:!1,hasChanged:v},lt=(t=ct
       .value-row {
         display: flex;
         align-items: baseline;
-        margin-top: 2px;
+        margin-top: 4px;
       }
       .value {
         font-size: 32px;
@@ -133,7 +133,7 @@ const ct={attribute:!0,type:String,converter:m,reflect:!1,hasChanged:v},lt=(t=ct
         font-size: 13px;
         font-weight: 500;
         color: var(--secondary-text-color);
-        margin-top: 2px;
+        margin-top: 4px;
         line-height: 1.2;
       }
       .not-found {
