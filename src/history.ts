@@ -136,7 +136,7 @@ async function fetchDailyFromHistory(
 
 const LOOKBACK_DAYS = [30, 90, 365];
 
-async function fetchHistoryWindow(
+async function fetchHistoryValues(
   hass: HomeAssistant,
   entityId: string,
   daysBack: number,
@@ -157,21 +157,55 @@ async function fetchHistoryWindow(
   return entries.map((e) => e.value);
 }
 
+async function fetchStatisticsValues(
+  hass: HomeAssistant,
+  entityId: string,
+  daysBack: number,
+): Promise<number[]> {
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - daysBack);
+
+  const result = await hass.callWS<Record<string, StatisticValue[]>>({
+    type: "recorder/statistics_during_period",
+    statistic_ids: [entityId],
+    period: "day",
+    start_time: startDate.toISOString(),
+    types: ["mean"],
+  });
+
+  const stats = result[entityId] || [];
+  return stats
+    .filter((s): s is StatisticValue & { mean: number } => s.mean != null)
+    .map((s) => s.mean);
+}
+
 export async function fetchRecentValues(
   hass: HomeAssistant,
   entityId: string,
   count: number,
 ): Promise<number[]> {
+  let best: number[] = [];
+
+  // Try history with progressive lookback
   for (const days of LOOKBACK_DAYS) {
     try {
-      const allValues = await fetchHistoryWindow(hass, entityId, days);
-      const deduped = dedupeConsecutive(allValues);
-      if (deduped.length >= count || days === LOOKBACK_DAYS[LOOKBACK_DAYS.length - 1]) {
-        return deduped.slice(-count);
-      }
+      const raw = await fetchHistoryValues(hass, entityId, days);
+      const deduped = dedupeConsecutive(raw);
+      if (deduped.length > best.length) best = deduped;
+      if (best.length >= count) return best.slice(-count);
     } catch {
       continue;
     }
   }
-  return [];
+
+  // Fallback: daily statistics retain data after raw history is purged
+  try {
+    const statsRaw = await fetchStatisticsValues(hass, entityId, 365);
+    const statsDeduped = dedupeConsecutive(statsRaw);
+    if (statsDeduped.length > best.length) best = statsDeduped;
+  } catch {
+    // ignore
+  }
+
+  return best.slice(-count);
 }

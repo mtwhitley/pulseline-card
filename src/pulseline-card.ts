@@ -101,15 +101,13 @@ export class PulseLineCard extends LitElement {
   }
 
   public getCardSize(): number {
-    const hasFooter = this._config?.footer_row && this._config.footer_row.type !== "none";
-    return hasFooter ? 3 : 2;
+    return 2;
   }
 
   public getGridOptions(): { columns: number; rows: number; min_columns: number; min_rows: number } {
-    const hasFooter = this._config?.footer_row && this._config.footer_row.type !== "none";
     return {
       columns: 6,
-      rows: hasFooter ? 3 : 2,
+      rows: 2,
       min_columns: 3,
       min_rows: 1,
     };
