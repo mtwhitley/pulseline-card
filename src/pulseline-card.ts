@@ -55,14 +55,14 @@ export class PulseLineCard extends LitElement {
   }
 
   public getCardSize(): number {
-    return 2;
+    return 1;
   }
 
   public getGridOptions(): { columns: number; rows: number; min_columns: number; min_rows: number } {
     return {
-      columns: 6,
-      rows: 2,
-      min_columns: 3,
+      columns: 2,
+      rows: 1,
+      min_columns: 2,
       min_rows: 1,
     };
   }
@@ -175,6 +175,9 @@ export class PulseLineCard extends LitElement {
 
   static get styles(): CSSResultGroup {
     return css`
+      :host {
+        display: block;
+      }
       ha-card {
         padding: 12px;
         overflow: hidden;
