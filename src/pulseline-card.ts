@@ -1,7 +1,8 @@
-import { LitElement, html, css, nothing, CSSResultGroup, TemplateResult } from "lit";
+import { LitElement, html, svg, css, nothing, CSSResultGroup, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { CARD_NAME, CARD_VERSION, DEFAULT_ICON, DEFAULT_ACCENT_COLOR } from "./const";
+import { CARD_NAME, CARD_VERSION, DEFAULT_ICON, DEFAULT_ACCENT_COLOR, DEFAULT_X_VALUES, MAX_X_VALUES } from "./const";
 import type { PulseLineCardConfig, HomeAssistant, HassEntity, KudosRule } from "./types";
+import { fetchDailyBuckets, fetchRecentValues } from "./history";
 
 /* eslint-disable no-console */
 console.info(
@@ -11,10 +12,26 @@ console.info(
 );
 /* eslint-enable no-console */
 
+// SVG sparkline constants
+const SVG_W = 300;
+const SVG_CHART_H = 40;
+const SVG_LABEL_H = 16;
+const PAD_X = 12;
+const PAD_Y = 6;
+const DOT_R = 3.5;
+const FETCH_COOLDOWN = 300_000;
+const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 @customElement(CARD_NAME)
 export class PulseLineCard extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() private _config!: PulseLineCardConfig;
+  @state() private _dailyBuckets: (number | null)[] = [];
+  @state() private _recentValues: number[] = [];
+
+  private _lastFetchKey = "";
+  private _lastFetchTime = 0;
+  private _fetchInProgress = false;
 
   public static getStubConfig(): Record<string, unknown> {
     return { entity: "sensor.temperature" };
@@ -33,11 +50,14 @@ export class PulseLineCard extends LitElement {
     if (config.display_style === "score" && (config.score_max == null || typeof config.score_max !== "number")) {
       throw new Error("Invalid configuration: 'score_max' is required when display_style is 'score'");
     }
+
+    // Supporting row validation
     if (config.supporting_row) {
-      if (config.supporting_row.type !== "none" && config.supporting_row.type !== "kudos") {
-        throw new Error("Invalid configuration: supporting_row.type must be 'none' or 'kudos'");
+      const sType = config.supporting_row.type;
+      if (sType !== "none" && sType !== "kudos" && sType !== "delta") {
+        throw new Error("Invalid configuration: supporting_row.type must be 'none', 'kudos', or 'delta'");
       }
-      if (config.supporting_row.type === "kudos") {
+      if (sType === "kudos") {
         if (!Array.isArray(config.supporting_row.kudos_rules) || config.supporting_row.kudos_rules.length === 0) {
           throw new Error("Invalid configuration: 'kudos_rules' must be a non-empty array when type is 'kudos'");
         }
@@ -50,22 +70,94 @@ export class PulseLineCard extends LitElement {
           }
         }
       }
+      if (sType === "delta") {
+        if (!config.footer_row || config.footer_row.type !== "recent_values_sparkline") {
+          throw new Error("Invalid configuration: supporting_row 'delta' requires footer_row type 'recent_values_sparkline'");
+        }
+      }
     }
+
+    // Footer row validation
+    if (config.footer_row) {
+      const fType = config.footer_row.type;
+      if (fType !== "none" && fType !== "recent_days_sparkline" && fType !== "recent_values_sparkline" && fType !== "progress_bar") {
+        throw new Error("Invalid configuration: footer_row.type must be 'none', 'recent_days_sparkline', 'recent_values_sparkline', or 'progress_bar'");
+      }
+      if (fType === "recent_values_sparkline" && config.footer_row.x_values != null) {
+        if (typeof config.footer_row.x_values !== "number" || config.footer_row.x_values < 2 || config.footer_row.x_values > MAX_X_VALUES) {
+          throw new Error(`Invalid configuration: x_values must be a number between 2 and ${MAX_X_VALUES}`);
+        }
+      }
+      if (fType === "progress_bar" && config.display_style !== "score") {
+        throw new Error("Invalid configuration: progress_bar footer requires display_style 'score'");
+      }
+    }
+
     this._config = config;
   }
 
   public getCardSize(): number {
-    return 2;
+    const hasFooter = this._config?.footer_row && this._config.footer_row.type !== "none";
+    return hasFooter ? 3 : 2;
   }
 
   public getGridOptions(): { columns: number; rows: number; min_columns: number; min_rows: number } {
+    const hasFooter = this._config?.footer_row && this._config.footer_row.type !== "none";
     return {
       columns: 6,
-      rows: 2,
+      rows: hasFooter ? 3 : 2,
       min_columns: 3,
       min_rows: 1,
     };
   }
+
+  // --- Data fetching ---
+
+  protected updated(changedProperties: Map<PropertyKey, unknown>): void {
+    super.updated(changedProperties);
+    if (!changedProperties.has("hass") && !changedProperties.has("_config")) return;
+    this._scheduleDataFetch();
+  }
+
+  private _scheduleDataFetch(): void {
+    if (!this._config || !this.hass) return;
+    const footer = this._config.footer_row;
+    if (!footer || footer.type === "none" || footer.type === "progress_bar") return;
+
+    const xValues = footer.type === "recent_values_sparkline" ? (footer.x_values || DEFAULT_X_VALUES) : 7;
+    const key = `${this._config.entity}:${footer.type}:${xValues}`;
+    const now = Date.now();
+
+    if (key !== this._lastFetchKey || now - this._lastFetchTime > FETCH_COOLDOWN) {
+      if (!this._fetchInProgress) {
+        this._lastFetchKey = key;
+        this._lastFetchTime = now;
+        this._fetchData();
+      }
+    }
+  }
+
+  private async _fetchData(): Promise<void> {
+    if (!this.hass || !this._config?.footer_row) return;
+    this._fetchInProgress = true;
+
+    try {
+      const footer = this._config.footer_row;
+      if (footer.type === "recent_days_sparkline") {
+        this._dailyBuckets = await fetchDailyBuckets(this.hass, this._config.entity, 7);
+      } else if (footer.type === "recent_values_sparkline") {
+        this._recentValues = await fetchRecentValues(
+          this.hass,
+          this._config.entity,
+          footer.x_values || DEFAULT_X_VALUES,
+        );
+      }
+    } finally {
+      this._fetchInProgress = false;
+    }
+  }
+
+  // --- Entity helpers ---
 
   private _getEntity(): HassEntity | undefined {
     if (!this.hass || !this._config) return undefined;
@@ -90,12 +182,12 @@ export class PulseLineCard extends LitElement {
 
   private _evaluateKudos(value: number, rules: KudosRule[]): string | null {
     for (const rule of rules) {
-      const aboveMin = value >= rule.min;
-      const belowMax = rule.max == null || value <= rule.max;
-      if (aboveMin && belowMax) return rule.label;
+      if (value >= rule.min && (rule.max == null || value <= rule.max)) return rule.label;
     }
     return null;
   }
+
+  // --- Row renderers ---
 
   private _renderValueRow(entity: HassEntity): TemplateResult {
     const stateValue = entity.state;
@@ -131,8 +223,150 @@ export class PulseLineCard extends LitElement {
       return html`<div class="supporting-row">${label}</div>`;
     }
 
+    if (supporting.type === "delta") {
+      return this._renderDelta(entity);
+    }
+
     return nothing;
   }
+
+  private _renderDelta(entity: HassEntity): TemplateResult | typeof nothing {
+    if (this._recentValues.length < 2) return nothing;
+
+    const first = this._recentValues[0];
+    const last = this._recentValues[this._recentValues.length - 1];
+    const diff = last - first;
+    const absDiff = Math.abs(diff);
+    const rounded = Math.round(absDiff * 10) / 10;
+
+    const displayStyle = this._config.display_style || "unit";
+    const unitStr = displayStyle === "unit" ? (entity.attributes.unit_of_measurement as string || "") : "";
+    const unitDisplay = unitStr ? ` ${unitStr}` : "";
+
+    if (rounded === 0) {
+      return html`<div class="supporting-row delta">
+        <span class="delta-arrow">–</span>
+        <span>0${unitDisplay}</span>
+      </div>`;
+    }
+
+    const arrow = diff > 0 ? "▴" : "▾";
+
+    const formatted = rounded % 1 === 0 ? rounded.toString() : rounded.toFixed(1);
+
+    return html`<div class="supporting-row delta">
+      <span class="delta-arrow">${arrow}</span>
+      <span>${formatted}${unitDisplay}</span>
+    </div>`;
+  }
+
+  // --- Footer renderers ---
+
+  private _renderFooterRow(entity: HassEntity, accent: string): TemplateResult | typeof nothing {
+    const footer = this._config.footer_row;
+    if (!footer || footer.type === "none") return nothing;
+
+    if (footer.type === "recent_days_sparkline") {
+      return this._renderSparkline(this._dailyBuckets, accent, true);
+    }
+    if (footer.type === "recent_values_sparkline") {
+      return this._renderSparkline(this._recentValues, accent, false);
+    }
+    if (footer.type === "progress_bar") {
+      return this._renderProgressBar(entity, accent);
+    }
+
+    return nothing;
+  }
+
+  private _renderSparkline(
+    values: (number | null)[],
+    accent: string,
+    withLabels: boolean,
+  ): TemplateResult | typeof nothing {
+    const validPoints: { index: number; value: number }[] = [];
+    for (let i = 0; i < values.length; i++) {
+      if (values[i] != null) {
+        validPoints.push({ index: i, value: values[i] as number });
+      }
+    }
+
+    if (validPoints.length < 2) return nothing;
+
+    const minVal = Math.min(...validPoints.map((p) => p.value));
+    const maxVal = Math.max(...validPoints.map((p) => p.value));
+    const range = maxVal - minVal || 1;
+
+    const chartW = SVG_W - 2 * PAD_X;
+    const chartH = SVG_CHART_H - 2 * PAD_Y;
+    const count = values.length;
+    const step = count > 1 ? chartW / (count - 1) : 0;
+
+    const points = validPoints.map((p) => ({
+      x: PAD_X + p.index * step,
+      y: PAD_Y + chartH - ((p.value - minVal) / range) * chartH,
+    }));
+
+    const pathD = points
+      .map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+      .join(" ");
+
+    const dotEls = points.map(
+      (p) => svg`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${DOT_R}" fill="${accent}" />`,
+    );
+
+    const viewH = withLabels ? SVG_CHART_H + SVG_LABEL_H : SVG_CHART_H;
+
+    let labelEls: unknown = nothing;
+    if (withLabels) {
+      const now = new Date();
+      labelEls = Array.from({ length: count }, (_, i) => {
+        const d = new Date(now);
+        d.setDate(d.getDate() - (count - 1 - i));
+        const dayName = DAY_NAMES[d.getDay()];
+        const x = PAD_X + i * step;
+        const isToday = i === count - 1;
+        return svg`
+          <text
+            x="${x.toFixed(1)}"
+            y="${SVG_CHART_H + SVG_LABEL_H - 2}"
+            text-anchor="middle"
+            font-size="9"
+            font-weight="${isToday ? "bold" : "normal"}"
+            fill="${isToday ? accent : "var(--secondary-text-color)"}"
+            opacity="${isToday ? 1 : 0.7}"
+          >${dayName}</text>
+        `;
+      });
+    }
+
+    return html`
+      <div class="footer-row">
+        <svg viewBox="0 0 ${SVG_W} ${viewH}" class="sparkline-svg">
+          ${svg`<path d="${pathD}" fill="none" stroke="${accent}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />`}
+          ${dotEls}
+          ${labelEls}
+        </svg>
+      </div>
+    `;
+  }
+
+  private _renderProgressBar(entity: HassEntity, accent: string): TemplateResult | typeof nothing {
+    const value = parseFloat(entity.state);
+    if (isNaN(value)) return nothing;
+    const max = this._config.score_max!;
+    const pct = Math.max(0, Math.min(100, (value / max) * 100));
+
+    return html`
+      <div class="footer-row">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${pct}%; background: ${accent};"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  // --- Main render ---
 
   protected render(): TemplateResult {
     if (!this._config || !this.hass) {
@@ -169,6 +403,7 @@ export class PulseLineCard extends LitElement {
             ${this._renderSupportingRow(entity)}
           </div>
         </div>
+        ${this._renderFooterRow(entity, accent)}
       </ha-card>
     `;
   }
@@ -179,7 +414,7 @@ export class PulseLineCard extends LitElement {
         display: block;
       }
       ha-card {
-        padding: 6px 10px;
+        padding: 10px 15px;
         overflow: hidden;
         box-sizing: border-box;
       }
@@ -245,6 +480,33 @@ export class PulseLineCard extends LitElement {
         color: var(--secondary-text-color);
         margin-top: 6px;
         line-height: 1.2;
+      }
+      .delta {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+      .delta-arrow {
+        font-size: 10px;
+        line-height: 1;
+      }
+      .footer-row {
+        margin-top: 8px;
+      }
+      .sparkline-svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .progress-bar {
+        height: 4px;
+        background: var(--divider-color, rgba(255, 255, 255, 0.12));
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        border-radius: 2px;
       }
       .not-found {
         font-size: 13px;
