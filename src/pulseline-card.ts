@@ -51,6 +51,10 @@ export class PulseLineCard extends LitElement {
       throw new Error("Invalid configuration: 'score_max' is required when display_style is 'score'");
     }
 
+    if (config.value_precision != null && (typeof config.value_precision !== "number" || config.value_precision < 0)) {
+      throw new Error("Invalid configuration: 'value_precision' must be a non-negative number");
+    }
+
     // Supporting row validation
     if (config.supporting_row) {
       const sType = config.supporting_row.type;
@@ -189,14 +193,21 @@ export class PulseLineCard extends LitElement {
 
   // --- Row renderers ---
 
+  private _formatValue(rawState: string): string {
+    const precision = this._config.value_precision ?? 0;
+    const num = parseFloat(rawState);
+    if (isNaN(num)) return rawState;
+    return num.toFixed(precision);
+  }
+
   private _renderValueRow(entity: HassEntity): TemplateResult {
-    const stateValue = entity.state;
+    const formatted = this._formatValue(entity.state);
     const displayStyle = this._config.display_style || "unit";
 
     if (displayStyle === "score") {
       return html`
         <div class="value-row">
-          <span class="value">${stateValue}</span>
+          <span class="value">${formatted}</span>
           <span class="score-max">/ ${this._config.score_max}</span>
         </div>
       `;
@@ -205,7 +216,7 @@ export class PulseLineCard extends LitElement {
     const unit = entity.attributes.unit_of_measurement as string | undefined;
     return html`
       <div class="value-row">
-        <span class="value">${stateValue}</span>
+        <span class="value">${formatted}</span>
         ${unit ? html`<span class="unit">${unit}</span>` : nothing}
       </div>
     `;
@@ -243,19 +254,23 @@ export class PulseLineCard extends LitElement {
     const unitStr = displayStyle === "unit" ? (entity.attributes.unit_of_measurement as string || "") : "";
     const unitDisplay = unitStr ? ` ${unitStr}` : "";
 
+    let icon: string;
     if (rounded === 0) {
-      return html`<div class="supporting-row delta">
-        <span class="delta-arrow">–</span>
-        <span>0${unitDisplay}</span>
-      </div>`;
+      icon = "mdi:minus";
+    } else if (diff > 0) {
+      icon = "mdi:arrow-up";
+    } else {
+      icon = "mdi:arrow-down";
     }
 
-    const arrow = diff > 0 ? "▴" : "▾";
+    const formatted = rounded === 0 ? "0" : (rounded % 1 === 0 ? rounded.toString() : rounded.toFixed(1));
 
-    const formatted = rounded % 1 === 0 ? rounded.toString() : rounded.toFixed(1);
+    const accent = this._getAccentColor();
 
     return html`<div class="supporting-row delta">
-      <span class="delta-arrow">${arrow}</span>
+      <div class="delta-badge" style="background: ${accent}33; color: ${accent};">
+        <ha-icon .icon=${icon}></ha-icon>
+      </div>
       <span>${formatted}${unitDisplay}</span>
     </div>`;
   }
@@ -484,14 +499,22 @@ export class PulseLineCard extends LitElement {
       .delta {
         display: flex;
         align-items: center;
-        gap: 3px;
+        gap: 4px;
       }
-      .delta-arrow {
-        font-size: 10px;
-        line-height: 1;
+      .delta-badge {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .delta-badge ha-icon {
+        --mdc-icon-size: 12px;
       }
       .footer-row {
-        margin-top: 8px;
+        margin-top: 6px;
       }
       .sparkline-svg {
         display: block;

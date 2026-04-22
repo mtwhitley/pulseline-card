@@ -22,6 +22,7 @@ export interface PulseLineCardConfig {
   accent_color?: string;
   display_style?: "unit" | "score";
   score_max?: number;
+  value_precision?: number;
   supporting_row?: SupportingRowConfig;
   footer_row?: FooterRowConfig;
 }

@@ -34,6 +34,22 @@ function parseNumericEntries(
   return result;
 }
 
+const DEDUPE_PRECISION = 100; // round to 2 decimal places
+
+function dedupeConsecutive(values: number[]): number[] {
+  if (values.length === 0) return [];
+  const result: number[] = [values[0]];
+  let prevRounded = Math.round(values[0] * DEDUPE_PRECISION);
+  for (let i = 1; i < values.length; i++) {
+    const curRounded = Math.round(values[i] * DEDUPE_PRECISION);
+    if (curRounded !== prevRounded) {
+      result.push(values[i]);
+      prevRounded = curRounded;
+    }
+  }
+  return result;
+}
+
 export async function fetchDailyBuckets(
   hass: HomeAssistant,
   entityId: string,
@@ -118,27 +134,44 @@ async function fetchDailyFromHistory(
   }
 }
 
+const LOOKBACK_DAYS = [30, 90, 365];
+
+async function fetchHistoryWindow(
+  hass: HomeAssistant,
+  entityId: string,
+  daysBack: number,
+): Promise<number[]> {
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - daysBack);
+
+  const result = await hass.callWS<Record<string, HistoryEntry[]>>({
+    type: "history/history_during_period",
+    start_time: startDate.toISOString(),
+    entity_ids: [entityId],
+    minimal_response: true,
+    no_attributes: true,
+    significant_changes_only: false,
+  });
+
+  const entries = parseNumericEntries(result[entityId] || []);
+  return entries.map((e) => e.value);
+}
+
 export async function fetchRecentValues(
   hass: HomeAssistant,
   entityId: string,
   count: number,
 ): Promise<number[]> {
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - 30);
-
-  try {
-    const result = await hass.callWS<Record<string, HistoryEntry[]>>({
-      type: "history/history_during_period",
-      start_time: startDate.toISOString(),
-      entity_ids: [entityId],
-      minimal_response: true,
-      no_attributes: true,
-      significant_changes_only: false,
-    });
-
-    const entries = parseNumericEntries(result[entityId] || []);
-    return entries.map((e) => e.value).slice(-count);
-  } catch {
-    return [];
+  for (const days of LOOKBACK_DAYS) {
+    try {
+      const allValues = await fetchHistoryWindow(hass, entityId, days);
+      const deduped = dedupeConsecutive(allValues);
+      if (deduped.length >= count || days === LOOKBACK_DAYS[LOOKBACK_DAYS.length - 1]) {
+        return deduped.slice(-count);
+      }
+    } catch {
+      continue;
+    }
   }
+  return [];
 }
