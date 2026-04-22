@@ -176,26 +176,27 @@ export class PulseLineCard extends LitElement {
   static get styles(): CSSResultGroup {
     return css`
       ha-card {
-        padding: 10px 14px;
+        padding: 12px;
         overflow: hidden;
+        box-sizing: border-box;
       }
       .card-content {
         display: flex;
         flex-direction: row;
         align-items: flex-start;
-        gap: 14px;
+        gap: 12px;
       }
       .icon-badge {
         flex-shrink: 0;
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
       }
       .icon-badge ha-icon {
-        --mdc-icon-size: 22px;
+        --mdc-icon-size: 20px;
       }
       .text-block {
         display: flex;
