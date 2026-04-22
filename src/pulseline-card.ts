@@ -55,13 +55,13 @@ export class PulseLineCard extends LitElement {
   }
 
   public getCardSize(): number {
-    return 1;
+    return 2;
   }
 
   public getGridOptions(): { columns: number; rows: number; min_columns: number; min_rows: number } {
     return {
-      columns: 3,
-      rows: 1,
+      columns: 6,
+      rows: 2,
       min_columns: 3,
       min_rows: 1,
     };
@@ -179,7 +179,7 @@ export class PulseLineCard extends LitElement {
         display: block;
       }
       ha-card {
-        padding: 12px;
+        padding: 8px 10px;
         overflow: hidden;
         box-sizing: border-box;
       }
@@ -187,7 +187,7 @@ export class PulseLineCard extends LitElement {
         display: flex;
         flex-direction: row;
         align-items: flex-start;
-        gap: 12px;
+        gap: 14px;
       }
       .icon-badge {
         flex-shrink: 0;
@@ -218,7 +218,7 @@ export class PulseLineCard extends LitElement {
       .value-row {
         display: flex;
         align-items: baseline;
-        margin-top: 4px;
+        margin-top: 6px;
       }
       .value {
         font-size: 32px;
@@ -243,7 +243,7 @@ export class PulseLineCard extends LitElement {
         font-size: 13px;
         font-weight: 500;
         color: var(--secondary-text-color);
-        margin-top: 4px;
+        margin-top: 6px;
         line-height: 1.2;
       }
       .not-found {
