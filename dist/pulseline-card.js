@@ -104,7 +104,7 @@ const dt={attribute:!0,type:String,converter:m,reflect:!1,hasChanged:v},pt=(t=dt
         display: block;
       }
       ha-card {
-        padding: 6px 10px;
+        padding: 10px 15px;
         overflow: hidden;
         box-sizing: border-box;
       }
