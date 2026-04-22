@@ -100,14 +100,32 @@ export class PulseLineCard extends LitElement {
     this._config = config;
   }
 
+  private _computeRowSize(): number {
+    const footer = this._config?.footer_row;
+    const supporting = this._config?.supporting_row;
+    const footerType = footer?.type ?? "none";
+
+    if (footerType === "recent_days_sparkline" || footerType === "recent_values_sparkline") {
+      return 3;
+    }
+    if (footerType === "progress_bar") {
+      return 2;
+    }
+    // No footer
+    if (supporting && supporting.type !== "none") {
+      return 2;
+    }
+    return 1;
+  }
+
   public getCardSize(): number {
-    return 2;
+    return this._computeRowSize();
   }
 
   public getGridOptions(): { columns: number; rows: number; min_columns: number; min_rows: number } {
     return {
       columns: 6,
-      rows: 2,
+      rows: this._computeRowSize(),
       min_columns: 3,
       min_rows: 1,
     };
