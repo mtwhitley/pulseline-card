@@ -44,6 +44,28 @@ export class PulseLineCard extends LitElement {
     if (!config.entity || typeof config.entity !== "string") {
       throw new Error("Invalid configuration: 'entity' is required");
     }
+
+    const cardMode = config.card_mode || "single";
+    if (cardMode !== "single" && cardMode !== "dual") {
+      throw new Error("Invalid configuration: 'card_mode' must be 'single' or 'dual'");
+    }
+
+    // Dual mode validation
+    if (cardMode === "dual") {
+      if (!config.entity_2 || typeof config.entity_2 !== "string") {
+        throw new Error("Invalid configuration: 'entity_2' is required when card_mode is 'dual'");
+      }
+      if (config.display_style === "score") {
+        throw new Error("Invalid configuration: display_style 'score' is not supported in dual mode");
+      }
+      if (config.footer_row && config.footer_row.type !== "none") {
+        throw new Error("Invalid configuration: footer_row is not supported in dual mode");
+      }
+      if (config.supporting_row && config.supporting_row.type === "delta") {
+        throw new Error("Invalid configuration: supporting_row 'delta' is not supported in dual mode");
+      }
+    }
+
     if (config.display_style && config.display_style !== "unit" && config.display_style !== "score") {
       throw new Error("Invalid configuration: 'display_style' must be 'unit' or 'score'");
     }
@@ -169,9 +191,18 @@ export class PulseLineCard extends LitElement {
 
   // --- Entity helpers ---
 
+  private _isDualMode(): boolean {
+    return (this._config?.card_mode || "single") === "dual";
+  }
+
   private _getEntity(): HassEntity | undefined {
     if (!this.hass || !this._config) return undefined;
     return this.hass.states[this._config.entity];
+  }
+
+  private _getEntity2(): HassEntity | undefined {
+    if (!this.hass || !this._config?.entity_2) return undefined;
+    return this.hass.states[this._config.entity_2];
   }
 
   private _getIcon(entity?: HassEntity): string {
@@ -207,6 +238,10 @@ export class PulseLineCard extends LitElement {
   }
 
   private _renderValueRow(entity: HassEntity): TemplateResult {
+    if (this._isDualMode()) {
+      return this._renderDualValueRow(entity);
+    }
+
     const formatted = this._formatValue(entity.state);
     const displayStyle = this._config.display_style || "unit";
 
@@ -223,6 +258,22 @@ export class PulseLineCard extends LitElement {
     return html`
       <div class="value-row">
         <span class="value">${formatted}</span>
+        ${unit ? html`<span class="unit">${unit}</span>` : nothing}
+      </div>
+    `;
+  }
+
+  private _renderDualValueRow(entity: HassEntity): TemplateResult {
+    const entity2 = this._getEntity2();
+    const val1 = this._formatValue(entity.state);
+    const val2 = entity2 ? this._formatValue(entity2.state) : "?";
+    const unit = entity.attributes.unit_of_measurement as string | undefined;
+
+    return html`
+      <div class="value-row">
+        <span class="value">${val1}</span>
+        <span class="dual-separator">/</span>
+        <span class="value">${val2}</span>
         ${unit ? html`<span class="unit">${unit}</span>` : nothing}
       </div>
     `;
@@ -405,6 +456,16 @@ export class PulseLineCard extends LitElement {
       `;
     }
 
+    if (this._isDualMode() && !this._getEntity2()) {
+      return html`
+        <ha-card>
+          <div class="content">
+            <div class="not-found">Entity not found: ${this._config.entity_2}</div>
+          </div>
+        </ha-card>
+      `;
+    }
+
     const accent = this._getAccentColor();
     const icon = this._getIcon(entity);
     const title = this._getTitle(entity);
@@ -481,6 +542,13 @@ export class PulseLineCard extends LitElement {
         font-weight: 700;
         color: var(--primary-text-color);
         line-height: 1.15;
+      }
+      .dual-separator {
+        font-size: 24px;
+        font-weight: 300;
+        color: var(--secondary-text-color);
+        margin: 0 2px;
+        opacity: 0.6;
       }
       .unit {
         font-size: 14px;
