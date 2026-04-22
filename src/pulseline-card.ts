@@ -60,9 +60,9 @@ export class PulseLineCard extends LitElement {
 
   public getGridOptions(): { columns: number; rows: number; min_columns: number; min_rows: number } {
     return {
-      columns: 2,
+      columns: 3,
       rows: 1,
-      min_columns: 2,
+      min_columns: 3,
       min_rows: 1,
     };
   }
