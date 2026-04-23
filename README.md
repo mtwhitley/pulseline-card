@@ -1,73 +1,257 @@
 # PulseLine Card
 
-A compact metric + trend card for Home Assistant.
+A compact, data-dense custom card for Home Assistant that combines a primary metric with contextual insights like trends, deltas, and status labels.
 
-> **Note:** This is a phase 0 scaffold. The card currently renders a placeholder UI only. Functionality (sparkline, metrics, deltas) will be added in future phases.
+PulseLine is designed to present meaningful information in a small footprint while maintaining strong visual balance and clarity.
+
+[screenshot - overview of multiple PulseLine cards in a dashboard]
+
+---
 
 ## Installation
 
-### HACS (recommended)
+### HACS (Recommended)
 
-1. Open HACS in Home Assistant
-2. Go to **Frontend** > three-dot menu > **Custom repositories**
-3. Add the repository URL with category **Dashboard**
-4. Search for "pulseline-card" and install
-5. Refresh your browser
+PulseLine Card can be installed via HACS as a custom repository.
 
-### Manual
+#### Step 1: Install HACS
+If you do not already have HACS installed, follow:
+https://hacs.xyz/docs/setup/download/
 
-1. Download `pulseline-card.js` from the [latest release](../../releases/latest)
-2. Copy it to your Home Assistant `config/www/` directory
-3. Add the resource in **Settings > Dashboards > Resources**:
-   - URL: `/local/pulseline-card.js`
-   - Type: JavaScript Module
+#### Step 2: Add Custom Repository
 
-## Usage
+1. Open **HACS**
+2. Go to **Frontend**
+3. Click the **⋮ (three dots)** menu (top right)
+4. Select **Custom repositories**
+5. Add:
+   - **Repository**: `https://github.com/mtwhitley/pulseline-card`
+   - **Category**: `Dashboard`
+6. Click **Add**
+
+#### Step 3: Install
+
+1. Search for **PulseLine Card** in HACS
+2. Click **Download**
+3. Restart Home Assistant (or reload resources)
+
+---
+
+### Manual Installation (Fallback)
+
+1. Download `pulseline-card.js` from the latest release  
+2. Copy to your Home Assistant `/config/www/` directory  
+3. Add to your Lovelace resources:
+
+```yaml
+resources:
+  - url: /local/pulseline-card.js
+    type: module
+```
+
+4. Restart Home Assistant or reload resources  
+
+> If the card does not appear after installation, refresh your browser or clear cache.
+
+---
+
+## Quick Start
 
 ```yaml
 type: custom:pulseline-card
+entity: sensor.sleep_score
+name: Sleep Score
 ```
 
-## Development
+[screenshot - simple single-value card]
 
-### Prerequisites
+---
 
-- Node.js (18+)
-- npm
+## Configuration
 
-### Setup
+| Option | Type | Default | Description |
+|--------|------|--------|-------------|
+| entity | string | required | Primary sensor |
+| entity_2 | string | — | Second sensor (dual mode only) |
+| card_mode | single / dual | single | Enables dual value display |
+| name | string | entity name | Card title |
+| icon | string | auto | MDI icon |
+| accent_color | string | theme | Accent color |
+| display_style | unit / score | unit | Value display mode |
+| score_max | number | — | Required for score mode |
+| value_precision | number | 0 | Decimal precision |
+| supporting_row | object | none | Adds kudos or delta |
+| footer_row | object | none | Adds sparkline or progress |
 
-```bash
-npm install
+---
+
+## Supporting Row
+
+### Kudos
+
+Maps values to labels.
+
+```yaml
+supporting_row:
+  type: kudos
+  kudos_rules:
+    - min: 80
+      label: "Good"
+    - min: 60
+      max: 79
+      label: "Fair"
 ```
 
-### Build
+[screenshot - card with kudos label]
 
-```bash
-npm run build
+---
+
+### Delta
+
+Shows change across recent values.
+
+```yaml
+supporting_row:
+  type: delta
 ```
 
-Output: `dist/pulseline-card.js`
+---
 
-### Watch mode
+## Footer Row
 
-```bash
-npm run dev
+### Recent Days Sparkline
+
+```yaml
+footer_row:
+  type: recent_days_sparkline
 ```
 
-### Lint
+[screenshot - sparkline with day labels]
 
-```bash
-npm run lint
+---
+
+### Recent Values Sparkline
+
+```yaml
+footer_row:
+  type: recent_values_sparkline
+  x_values: 10
 ```
 
-### Local testing
+[screenshot - sparkline recent values]
 
-1. Build the card: `npm run build`
-2. Copy or symlink `dist/pulseline-card.js` to your Home Assistant `config/www/` directory
-3. Add the resource in Home Assistant: `/local/pulseline-card.js` (JavaScript Module)
-4. Add the card to a dashboard with `type: custom:pulseline-card`
+---
 
-## License
+### Progress Bar (Score Mode Only)
 
-MIT
+```yaml
+footer_row:
+  type: progress_bar
+```
+
+[screenshot - progress bar footer]
+
+---
+
+## Dual Mode
+
+Displays two values side by side.
+
+```yaml
+type: custom:pulseline-card
+card_mode: dual
+entity: sensor.systolic
+entity_2: sensor.diastolic
+name: Blood Pressure
+```
+
+[screenshot - dual card with two values]
+
+### Notes
+
+- No footer supported  
+- No delta supported  
+- Score mode not supported  
+
+---
+
+## Behavior Details
+
+### Precision
+
+- `value_precision` controls both display and logic  
+- Kudos evaluates using the same rounded value shown on screen  
+
+---
+
+### Unavailable Handling
+
+- Displays `-` instead of "unavailable"  
+- Dual mode shows `- / -`  
+- Hides:
+  - units  
+  - kudos  
+  - footer  
+
+---
+
+### History Behavior
+
+- Progressive lookback (30 → 90 → 365 days)  
+- Falls back to statistics when raw history is unavailable  
+- Deduplicates repeated values  
+
+---
+
+### Click Behavior
+
+- Clicking the card opens the Home Assistant **More Info** dialog for the primary entity  
+
+---
+
+## Layout Tips
+
+### Use Grid Cards (Recommended)
+
+PulseLine cards align much better when placed inside a grid card.
+
+```yaml
+type: grid
+columns: 2
+square: false
+cards:
+  - type: custom:pulseline-card
+    entity: sensor.sleep_score
+  - type: custom:pulseline-card
+    entity: sensor.steps
+```
+
+[screenshot - comparison: with grid vs without grid]
+
+---
+
+## Design Notes
+
+PulseLine is intentionally designed to be:
+
+- Compact and information-dense  
+- Visually balanced within Home Assistant sections  
+- Consistent in typography and spacing  
+- Accent-driven rather than color-coded by meaning  
+- Graceful when data is missing or sparse  
+
+---
+
+## Known Limitations
+
+- No visual card editor yet  
+- Dual mode limited to two entities  
+- No localization support  
+- Mobile layout uses responsive scaling rather than full adaptive layout  
+
+---
+
+## Credits
+
+- Created by Michael Whitley  
+- Built with assistance from Claude Code (implementation and iteration) and Codex (planning, review, validation, and guardrails)
