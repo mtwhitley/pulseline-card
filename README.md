@@ -92,14 +92,20 @@ name: Sleep Score
 Maps values to labels.
 
 ```yaml
+type: custom:pulseline-card
+entity: sensor.sleep_score
+name: Sleep Score
 supporting_row:
   type: kudos
   kudos_rules:
     - min: 80
-      label: "Good"
+      label: Good
     - min: 60
       max: 79
-      label: "Fair"
+      label: Fair
+    - min: 0
+      max: 59
+      label: Poor
 ```
 
 <img width="250" height="121" alt="Screenshot 2026-04-23 at 10 18 58 AM" src="https://github.com/user-attachments/assets/cfc971c9-ab72-41ff-a74a-2b4ac8d67827" />
@@ -112,6 +118,11 @@ supporting_row:
 Shows change across recent values.
 
 ```yaml
+type: custom:pulseline-card
+entity: sensor.sleep_score
+name: Sleep Score
+icon: mdi:power-sleep
+accent_color: "#8b5cf6"
 supporting_row:
   type: delta
 ```
@@ -126,6 +137,11 @@ supporting_row:
 ### Recent Days Sparkline
 
 ```yaml
+type: custom:pulseline-card
+entity: sensor.sleep_score
+name: Sleep Score
+icon: mdi:power-sleep
+accent_color: "#8b5cf6"
 footer_row:
   type: recent_days_sparkline
 ```
@@ -138,6 +154,11 @@ footer_row:
 ### Recent Values Sparkline
 
 ```yaml
+type: custom:pulseline-card
+entity: sensor.sleep_score
+name: Sleep Score
+icon: mdi:power-sleep
+accent_color: "#8b5cf6"
 footer_row:
   type: recent_values_sparkline
   x_values: 10
@@ -151,6 +172,13 @@ footer_row:
 ### Progress Bar (Score Mode Only)
 
 ```yaml
+type: custom:pulseline-card
+entity: sensor.sleep_score
+name: Sleep Score
+icon: mdi:power-sleep
+accent_color: "#8b5cf6"
+display_style: score
+score_max: 100
 footer_row:
   type: progress_bar
 ```
@@ -170,6 +198,9 @@ card_mode: dual
 entity: sensor.systolic
 entity_2: sensor.diastolic
 name: Blood Pressure
+icon: mdi:arrow-expand-horizontal
+accent_color: "#ff0000"
+value_precision: 0
 ```
 
 <img width="248" height="90" alt="Screenshot 2026-04-23 at 1 02 40 PM" src="https://github.com/user-attachments/assets/c61864ce-7f54-4e17-9f73-1fa0eebb4198" />
@@ -185,7 +216,20 @@ type: custom:pulseline-card
 card_mode: dual
 entity: sensor.systolic
 entity_2: sensor.diastolic
-name: Blood Pressure
+icon: mdi:arrow-expand-horizontal
+accent_color: "#ff0000"
+value_precision: 0
+supporting_row:
+  type: kudos
+  kudos_rules:
+    - min: 0
+      max: 120
+      label: Normal
+    - min: 121
+      max: 139
+      label: Elevated
+    - min: 140
+      label: High
 ```
 
 <img width="244" height="112" alt="Screenshot 2026-04-23 at 1 02 03 PM" src="https://github.com/user-attachments/assets/3b417db2-f900-49cb-b334-f95a53f053b3" />
