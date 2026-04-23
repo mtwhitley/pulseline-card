@@ -189,6 +189,18 @@ export class PulseLineCard extends LitElement {
     }
   }
 
+  // --- Interaction ---
+
+  private _handleClick(): void {
+    if (!this._config) return;
+    const event = new CustomEvent("hass-more-info", {
+      bubbles: true,
+      composed: true,
+      detail: { entityId: this._config.entity },
+    });
+    this.dispatchEvent(event);
+  }
+
   // --- Entity helpers ---
 
   private _isDualMode(): boolean {
@@ -471,7 +483,7 @@ export class PulseLineCard extends LitElement {
     const title = this._getTitle(entity);
 
     return html`
-      <ha-card>
+      <ha-card @click=${this._handleClick}>
         <div class="content">
           <div
             class="icon-badge"
@@ -499,6 +511,7 @@ export class PulseLineCard extends LitElement {
         padding: 10px 15px;
         overflow: hidden;
         box-sizing: border-box;
+        cursor: pointer;
       }
       .content {
         display: flex;
@@ -536,6 +549,7 @@ export class PulseLineCard extends LitElement {
         display: flex;
         align-items: baseline;
         margin-top: 6px;
+        white-space: nowrap;
       }
       .value {
         font-size: 32px;
@@ -607,6 +621,34 @@ export class PulseLineCard extends LitElement {
         font-size: 13px;
         color: var(--error-color, #ef4444);
         padding: 8px 0;
+      }
+      @media (max-width: 480px) {
+        .value {
+          font-size: 26px;
+        }
+        .value-dual {
+          font-size: 24px;
+        }
+        .value-suffix {
+          font-size: 12px;
+        }
+        .score-max,
+        .unit {
+          margin-left: 4px;
+        }
+        .dual-separator {
+          margin: 0 2px;
+        }
+        .content {
+          gap: 10px;
+        }
+        .icon-badge {
+          width: 36px;
+          height: 36px;
+        }
+        .icon-badge ha-icon {
+          --mdc-icon-size: 18px;
+        }
       }
     `;
   }
