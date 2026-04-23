@@ -102,7 +102,8 @@ supporting_row:
       label: "Fair"
 ```
 
-[screenshot - card with kudos label]
+<img width="250" height="121" alt="Screenshot 2026-04-23 at 10 18 58 AM" src="https://github.com/user-attachments/assets/cfc971c9-ab72-41ff-a74a-2b4ac8d67827" />
+
 
 ---
 
@@ -115,6 +116,9 @@ supporting_row:
   type: delta
 ```
 
+<img width="247" height="118" alt="Screenshot 2026-04-23 at 12 56 45 PM" src="https://github.com/user-attachments/assets/ceef2aa4-0d7c-406b-b535-cf90f3469137" />
+
+
 ---
 
 ## Footer Row
@@ -126,7 +130,8 @@ footer_row:
   type: recent_days_sparkline
 ```
 
-[screenshot - sparkline with day labels]
+<img width="247" height="141" alt="Screenshot 2026-04-23 at 12 58 08 PM" src="https://github.com/user-attachments/assets/2547458d-ce03-4cd0-a43c-eb61e60d1a1a" />
+
 
 ---
 
@@ -138,7 +143,8 @@ footer_row:
   x_values: 10
 ```
 
-[screenshot - sparkline recent values]
+<img width="250" height="132" alt="Screenshot 2026-04-23 at 12 58 29 PM" src="https://github.com/user-attachments/assets/f3c42af5-3e78-43a6-88cc-e7eeb6292da1" />
+
 
 ---
 
@@ -149,7 +155,8 @@ footer_row:
   type: progress_bar
 ```
 
-[screenshot - progress bar footer]
+<img width="244" height="102" alt="Screenshot 2026-04-23 at 12 58 55 PM" src="https://github.com/user-attachments/assets/9051215c-0a6f-42a5-9a01-3bc0682de68a" />
+
 
 ---
 
@@ -165,7 +172,25 @@ entity_2: sensor.diastolic
 name: Blood Pressure
 ```
 
-[screenshot - dual card with two values]
+<img width="248" height="90" alt="Screenshot 2026-04-23 at 1 02 40 PM" src="https://github.com/user-attachments/assets/c61864ce-7f54-4e17-9f73-1fa0eebb4198" />
+
+---
+
+## Dual Mode with Kudos
+
+Displays two values side by side.
+
+```yaml
+type: custom:pulseline-card
+card_mode: dual
+entity: sensor.systolic
+entity_2: sensor.diastolic
+name: Blood Pressure
+```
+
+<img width="244" height="112" alt="Screenshot 2026-04-23 at 1 02 03 PM" src="https://github.com/user-attachments/assets/3b417db2-f900-49cb-b334-f95a53f053b3" />
+
+---
 
 ### Notes
 
