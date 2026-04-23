@@ -96,11 +96,6 @@ export class PulseLineCard extends LitElement {
           }
         }
       }
-      if (sType === "delta") {
-        if (!config.footer_row || config.footer_row.type !== "recent_values_sparkline") {
-          throw new Error("Invalid configuration: supporting_row 'delta' requires footer_row type 'recent_values_sparkline'");
-        }
-      }
     }
 
     // Footer row validation
@@ -151,13 +146,27 @@ export class PulseLineCard extends LitElement {
     this._scheduleDataFetch();
   }
 
+  private _needsRecentValues(): boolean {
+    const footerType = this._config?.footer_row?.type;
+    if (footerType === "recent_values_sparkline") return true;
+    const supportType = this._config?.supporting_row?.type;
+    if (supportType === "delta" && footerType !== "recent_days_sparkline") return true;
+    return false;
+  }
+
+  private _needsDailyBuckets(): boolean {
+    return this._config?.footer_row?.type === "recent_days_sparkline";
+  }
+
   private _scheduleDataFetch(): void {
     if (!this._config || !this.hass) return;
-    const footer = this._config.footer_row;
-    if (!footer || footer.type === "none" || footer.type === "progress_bar") return;
 
-    const xValues = footer.type === "recent_values_sparkline" ? (footer.x_values || DEFAULT_X_VALUES) : 7;
-    const key = `${this._config.entity}:${footer.type}:${xValues}`;
+    const needsRecent = this._needsRecentValues();
+    const needsDaily = this._needsDailyBuckets();
+    if (!needsRecent && !needsDaily) return;
+
+    const xValues = needsRecent ? (this._config.footer_row?.x_values || DEFAULT_X_VALUES) : 0;
+    const key = `${this._config.entity}:r${needsRecent ? xValues : 0}:d${needsDaily ? 7 : 0}`;
     const now = Date.now();
 
     if (key !== this._lastFetchKey || now - this._lastFetchTime > FETCH_COOLDOWN) {
@@ -170,18 +179,18 @@ export class PulseLineCard extends LitElement {
   }
 
   private async _fetchData(): Promise<void> {
-    if (!this.hass || !this._config?.footer_row) return;
+    if (!this.hass || !this._config) return;
     this._fetchInProgress = true;
 
     try {
-      const footer = this._config.footer_row;
-      if (footer.type === "recent_days_sparkline") {
+      if (this._needsDailyBuckets()) {
         this._dailyBuckets = await fetchDailyBuckets(this.hass, this._config.entity, 7);
-      } else if (footer.type === "recent_values_sparkline") {
+      }
+      if (this._needsRecentValues()) {
         this._recentValues = await fetchRecentValues(
           this.hass,
           this._config.entity,
-          footer.x_values || DEFAULT_X_VALUES,
+          this._config.footer_row?.x_values || DEFAULT_X_VALUES,
         );
       }
     } finally {
@@ -350,11 +359,20 @@ export class PulseLineCard extends LitElement {
     return nothing;
   }
 
-  private _renderDelta(entity: HassEntity): TemplateResult | typeof nothing {
-    if (this._recentValues.length < 2) return nothing;
+  private _getDeltaValues(): number[] {
+    const footerType = this._config?.footer_row?.type;
+    if (footerType === "recent_days_sparkline") {
+      return this._dailyBuckets.filter((v): v is number => v != null);
+    }
+    return this._recentValues;
+  }
 
-    const first = this._recentValues[0];
-    const last = this._recentValues[this._recentValues.length - 1];
+  private _renderDelta(entity: HassEntity): TemplateResult | typeof nothing {
+    const values = this._getDeltaValues();
+    if (values.length < 2) return nothing;
+
+    const first = values[0];
+    const last = values[values.length - 1];
     const diff = last - first;
     const absDiff = Math.abs(diff);
     const rounded = Math.round(absDiff * 10) / 10;
@@ -713,5 +731,5 @@ win.customCards = win.customCards || [];
 ).push({
   type: CARD_NAME,
   name: "PulseLine Card",
-  description: "A compact metric + trend card for Home Assistant",
+  description: "A compact metric and trend card with deltas, sparklines, and contextual insights.",
 });

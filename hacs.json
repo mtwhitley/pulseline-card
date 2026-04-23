@@ -2,5 +2,7 @@
   "name": "PulseLine Card",
   "content_in_root": false,
   "filename": "pulseline-card.js",
-  "render_readme": true
+  "render_readme": true,
+  "homeassistant": "2024.1.0",
+  "hide_default_branch": false
 }
