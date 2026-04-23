@@ -233,6 +233,21 @@ export class PulseLineCard extends LitElement {
     return this._config.entity;
   }
 
+  private _isEntityUnavailable(entity: HassEntity): boolean {
+    const s = entity.state;
+    return s === "unavailable" || s === "unknown";
+  }
+
+  private _isValueUnavailable(): boolean {
+    const entity = this._getEntity();
+    if (!entity || this._isEntityUnavailable(entity)) return true;
+    if (this._isDualMode()) {
+      const entity2 = this._getEntity2();
+      if (!entity2 || this._isEntityUnavailable(entity2)) return true;
+    }
+    return false;
+  }
+
   private _evaluateKudos(value: number, rules: KudosRule[]): string | null {
     for (const rule of rules) {
       if (value >= rule.min && (rule.max == null || value <= rule.max)) return rule.label;
@@ -260,6 +275,10 @@ export class PulseLineCard extends LitElement {
       return this._renderDualValueRow(entity);
     }
 
+    if (this._isEntityUnavailable(entity)) {
+      return html`<div class="value-row"><span class="value-suffix">–</span></div>`;
+    }
+
     const formatted = this._formatValue(entity.state);
     const displayStyle = this._config.display_style || "unit";
 
@@ -283,8 +302,21 @@ export class PulseLineCard extends LitElement {
 
   private _renderDualValueRow(entity: HassEntity): TemplateResult {
     const entity2 = this._getEntity2();
+    const unavail1 = this._isEntityUnavailable(entity);
+    const unavail2 = !entity2 || this._isEntityUnavailable(entity2);
+
+    if (unavail1 || unavail2) {
+      return html`
+        <div class="value-row">
+          <span class="value-suffix">–</span>
+          <span class="value-suffix dual-separator">/</span>
+          <span class="value-suffix">–</span>
+        </div>
+      `;
+    }
+
     const val1 = this._formatValue(entity.state);
-    const val2 = entity2 ? this._formatValue(entity2.state) : "?";
+    const val2 = this._formatValue(entity2!.state);
     const unit = entity.attributes.unit_of_measurement as string | undefined;
 
     return html`
@@ -298,6 +330,8 @@ export class PulseLineCard extends LitElement {
   }
 
   private _renderSupportingRow(entity: HassEntity): TemplateResult | typeof nothing {
+    if (this._isValueUnavailable()) return nothing;
+
     const supporting = this._config.supporting_row;
     if (!supporting || supporting.type === "none") return nothing;
 
@@ -353,6 +387,8 @@ export class PulseLineCard extends LitElement {
   // --- Footer renderers ---
 
   private _renderFooterRow(entity: HassEntity, accent: string): TemplateResult | typeof nothing {
+    if (this._isValueUnavailable()) return nothing;
+
     const footer = this._config.footer_row;
     if (!footer || footer.type === "none") return nothing;
 
