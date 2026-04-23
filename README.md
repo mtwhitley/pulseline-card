@@ -63,7 +63,7 @@ entity: sensor.sleep_score
 name: Sleep Score
 ```
 
-[screenshot - simple single-value card]
+<img width="244" height="99" alt="Screenshot 2026-04-23 at 10 17 30 AM" src="https://github.com/user-attachments/assets/95c9c353-0225-4d0a-b1c0-33031a49b2ee" />
 
 ---
 
