@@ -39,19 +39,19 @@ const dt={attribute:!0,type:String,converter:$,reflect:!1,hasChanged:v},ut=(t=dt
  */function _t(t){return pt({...t,state:!0,attribute:!1})}const ft="pulseline-card";function gt(t){const e=[];for(const s of t){const t=s.s??s.state;if(!t)continue;const i=parseFloat(t);if(isNaN(i))continue;let r;if(null!=s.lu)r=1e3*s.lu;else{if(!s.last_updated)continue;r=new Date(s.last_updated).getTime()}e.push({value:i,timestamp:r})}return e}function yt(t){if(0===t.length)return[];const e=[t[0]];let s=Math.round(100*t[0]);for(let i=1;i<t.length;i++){const r=Math.round(100*t[i]);r!==s&&(e.push(t[i]),s=r)}return e}async function mt(t,e,s){const i=new Date,r=new Date(i);r.setDate(r.getDate()-(s-1)),r.setHours(0,0,0,0);try{const i=(await t.callWS({type:"recorder/statistics_during_period",statistic_ids:[e],period:"day",start_time:r.toISOString(),types:["mean"]}))[e];if(i&&i.length>0){const t=new Array(s).fill(null);for(const e of i){if(null==e.mean)continue;const i=new Date(e.start).getTime()-r.getTime(),n=Math.floor(i/864e5);n>=0&&n<s&&(t[n]=e.mean)}return t}}catch{}return async function(t,e,s,i){try{const r=gt((await t.callWS({type:"history/history_during_period",start_time:i.toISOString(),entity_ids:[e],minimal_response:!0,no_attributes:!0,significant_changes_only:!1}))[e]||[]),n=new Array(s).fill(null),o=new Array(s).fill(0),a=new Array(s).fill(0);for(const t of r){const e=t.timestamp-i.getTime(),r=Math.floor(e/864e5);r>=0&&r<s&&(o[r]+=t.value,a[r]++)}for(let t=0;t<s;t++)a[t]>0&&(n[t]=o[t]/a[t]);return n}catch{return new Array(s).fill(null)}}(t,e,s,r)}const $t=[30,90,365];async function vt(t,e,s){const i=new Date;i.setDate(i.getDate()-s);return gt((await t.callWS({type:"history/history_during_period",start_time:i.toISOString(),entity_ids:[e],minimal_response:!0,no_attributes:!0,significant_changes_only:!1}))[e]||[]).map(t=>t.value)}async function wt(t,e,s){let i=[];for(const r of $t)try{const n=yt(await vt(t,e,r));if(n.length>i.length&&(i=n),i.length>=s)return i.slice(-s)}catch{continue}try{const s=await async function(t,e,s){const i=new Date;return i.setDate(i.getDate()-s),((await t.callWS({type:"recorder/statistics_during_period",statistic_ids:[e],period:"day",start_time:i.toISOString(),types:["mean"]}))[e]||[]).filter(t=>null!=t.mean).map(t=>t.mean)}(t,e,365),r=yt(s);r.length>i.length&&(i=r)}catch{}return i.slice(-s)}console.info(`%c  ${ft.toUpperCase()}  %c  v0.3.0-dev.1  `,"color: white; background: #3b82f6; font-weight: bold; padding: 2px 6px; border-radius: 4px 0 0 4px;","color: #3b82f6; background: #e0e7ff; font-weight: bold; padding: 2px 6px; border-radius: 0 4px 4px 0;");const bt=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];let At=class extends ct{constructor(){super(...arguments),this._dailyBuckets=[],this._recentValues=[],this._lastFetchKey="",this._lastFetchTime=0,this._fetchInProgress=!1}static getStubConfig(){return{entity:"sensor.temperature"}}setConfig(t){if(!t||"object"!=typeof t)throw new Error("Invalid configuration: config must be an object");if(!t.entity||"string"!=typeof t.entity)throw new Error("Invalid configuration: 'entity' is required");const e=t.card_mode||"single";if("single"!==e&&"dual"!==e)throw new Error("Invalid configuration: 'card_mode' must be 'single' or 'dual'");if("dual"===e){if(!t.entity_2||"string"!=typeof t.entity_2)throw new Error("Invalid configuration: 'entity_2' is required when card_mode is 'dual'");if("score"===t.display_style)throw new Error("Invalid configuration: display_style 'score' is not supported in dual mode");if(t.footer_row&&"none"!==t.footer_row.type)throw new Error("Invalid configuration: footer_row is not supported in dual mode");if(t.supporting_row&&"delta"===t.supporting_row.type)throw new Error("Invalid configuration: supporting_row 'delta' is not supported in dual mode")}if(t.display_style&&"unit"!==t.display_style&&"score"!==t.display_style)throw new Error("Invalid configuration: 'display_style' must be 'unit' or 'score'");if("score"===t.display_style&&(null==t.score_max||"number"!=typeof t.score_max))throw new Error("Invalid configuration: 'score_max' is required when display_style is 'score'");if(null!=t.value_precision&&("number"!=typeof t.value_precision||t.value_precision<0))throw new Error("Invalid configuration: 'value_precision' must be a non-negative number");if(t.supporting_row){const e=t.supporting_row.type;if("none"!==e&&"kudos"!==e&&"delta"!==e)throw new Error("Invalid configuration: supporting_row.type must be 'none', 'kudos', or 'delta'");if("kudos"===e){if(!Array.isArray(t.supporting_row.kudos_rules)||0===t.supporting_row.kudos_rules.length)throw new Error("Invalid configuration: 'kudos_rules' must be a non-empty array when type is 'kudos'");for(const e of t.supporting_row.kudos_rules){if("number"!=typeof e.min||"string"!=typeof e.label)throw new Error("Invalid configuration: each kudos rule must have 'min' (number) and 'label' (string)");if(null!=e.max&&"number"!=typeof e.max)throw new Error("Invalid configuration: kudos rule 'max' must be a number if provided")}}if("delta"===e&&(!t.footer_row||"recent_values_sparkline"!==t.footer_row.type))throw new Error("Invalid configuration: supporting_row 'delta' requires footer_row type 'recent_values_sparkline'")}if(t.footer_row){const e=t.footer_row.type;if("none"!==e&&"recent_days_sparkline"!==e&&"recent_values_sparkline"!==e&&"progress_bar"!==e)throw new Error("Invalid configuration: footer_row.type must be 'none', 'recent_days_sparkline', 'recent_values_sparkline', or 'progress_bar'");if("recent_values_sparkline"===e&&null!=t.footer_row.x_values&&("number"!=typeof t.footer_row.x_values||t.footer_row.x_values<2||t.footer_row.x_values>14))throw new Error("Invalid configuration: x_values must be a number between 2 and 14");if("progress_bar"===e&&"score"!==t.display_style)throw new Error("Invalid configuration: progress_bar footer requires display_style 'score'")}this._config=t}_computeRowSize(){const t=this._config?.footer_row?.type??"none";return"recent_days_sparkline"===t||"recent_values_sparkline"===t?3:2}getCardSize(){return this._computeRowSize()}getGridOptions(){return{columns:6,rows:this._computeRowSize(),min_columns:3,min_rows:1}}updated(t){super.updated(t),(t.has("hass")||t.has("_config"))&&this._scheduleDataFetch()}_scheduleDataFetch(){if(!this._config||!this.hass)return;const t=this._config.footer_row;if(!t||"none"===t.type||"progress_bar"===t.type)return;const e="recent_values_sparkline"===t.type&&t.x_values||7,s=`${this._config.entity}:${t.type}:${e}`,i=Date.now();(s!==this._lastFetchKey||i-this._lastFetchTime>3e5)&&(this._fetchInProgress||(this._lastFetchKey=s,this._lastFetchTime=i,this._fetchData()))}async _fetchData(){if(this.hass&&this._config?.footer_row){this._fetchInProgress=!0;try{const t=this._config.footer_row;"recent_days_sparkline"===t.type?this._dailyBuckets=await mt(this.hass,this._config.entity,7):"recent_values_sparkline"===t.type&&(this._recentValues=await wt(this.hass,this._config.entity,t.x_values||7))}finally{this._fetchInProgress=!1}}}_isDualMode(){return"dual"===(this._config?.card_mode||"single")}_getEntity(){if(this.hass&&this._config)return this.hass.states[this._config.entity]}_getEntity2(){if(this.hass&&this._config?.entity_2)return this.hass.states[this._config.entity_2]}_getIcon(t){return this._config.icon?this._config.icon:t?.attributes.icon?t.attributes.icon:"mdi:chart-line"}_getAccentColor(){return this._config.accent_color||"#3b82f6"}_getTitle(t){return this._config.name?this._config.name:t?.attributes.friendly_name?t.attributes.friendly_name:this._config.entity}_evaluateKudos(t,e){for(const s of e)if(t>=s.min&&(null==s.max||t<=s.max))return s.label;return null}_formatValue(t){const e=this._config.value_precision??0,s=parseFloat(t);return isNaN(s)?t:s.toFixed(e)}_renderValueRow(t){if(this._isDualMode())return this._renderDualValueRow(t);const e=this._formatValue(t.state);if("score"===(this._config.display_style||"unit"))return L`
         <div class="value-row">
           <span class="value">${e}</span>
-          <span class="score-max">/ ${this._config.score_max}</span>
+          <span class="value-suffix score-max">/ ${this._config.score_max}</span>
         </div>
       `;const s=t.attributes.unit_of_measurement;return L`
       <div class="value-row">
         <span class="value">${e}</span>
-        ${s?L`<span class="unit">${s}</span>`:K}
+        ${s?L`<span class="value-suffix unit">${s}</span>`:K}
       </div>
     `}_renderDualValueRow(t){const e=this._getEntity2(),s=this._formatValue(t.state),i=e?this._formatValue(e.state):"?",r=t.attributes.unit_of_measurement;return L`
       <div class="value-row">
-        <span class="value">${s}</span>
-        <span class="dual-separator">/</span>
-        <span class="value">${i}</span>
-        ${r?L`<span class="unit">${r}</span>`:K}
+        <span class="value value-dual">${s}</span>
+        <span class="value-suffix dual-separator">/</span>
+        <span class="value value-dual">${i}</span>
+        ${r?L`<span class="value-suffix unit">${r}</span>`:K}
       </div>
     `}_renderSupportingRow(t){const e=this._config.supporting_row;if(!e||"none"===e.type)return K;if("kudos"===e.type&&e.kudos_rules){const s=parseFloat(t.state);if(isNaN(s))return K;const i=this._evaluateKudos(s,e.kudos_rules);return i?L`<div class="supporting-row">${i}</div>`:K}return"delta"===e.type?this._renderDelta(t):K}_renderDelta(t){if(this._recentValues.length<2)return K;const e=this._recentValues[0],s=this._recentValues[this._recentValues.length-1]-e,i=Math.abs(s),r=Math.round(10*i)/10,n="unit"===(this._config.display_style||"unit")&&t.attributes.unit_of_measurement||"",o=n?` ${n}`:"";let a;a=0===r?"mdi:minus":s>0?"mdi:arrow-up":"mdi:arrow-down";const l=0===r?"0":r%1==0?r.toString():r.toFixed(1),c=this._getAccentColor();return L`<div class="supporting-row delta">
       <div class="delta-badge" style="background: ${c}33; color: ${c};">
@@ -163,25 +163,23 @@ const dt={attribute:!0,type:String,converter:$,reflect:!1,hasChanged:v},ut=(t=dt
         color: var(--primary-text-color);
         line-height: 1.15;
       }
-      .dual-separator {
-        font-size: 24px;
-        font-weight: 300;
-        color: var(--secondary-text-color);
-        margin: 0 2px;
-        opacity: 0.6;
-      }
-      .unit {
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--secondary-text-color);
-        margin-left: 5px;
-      }
-      .score-max {
+      .value-suffix {
         font-size: 14px;
         font-weight: 400;
         color: var(--secondary-text-color);
-        margin-left: 6px;
         opacity: 0.7;
+      }
+      .score-max {
+        margin-left: 6px;
+      }
+      .unit {
+        margin-left: 6px;
+      }
+      .dual-separator {
+        margin: 0 4px;
+      }
+      .value-dual {
+        font-size: 28px;
       }
       .supporting-row {
         font-size: 13px;

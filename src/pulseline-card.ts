@@ -249,7 +249,7 @@ export class PulseLineCard extends LitElement {
       return html`
         <div class="value-row">
           <span class="value">${formatted}</span>
-          <span class="score-max">/ ${this._config.score_max}</span>
+          <span class="value-suffix score-max">/ ${this._config.score_max}</span>
         </div>
       `;
     }
@@ -258,7 +258,7 @@ export class PulseLineCard extends LitElement {
     return html`
       <div class="value-row">
         <span class="value">${formatted}</span>
-        ${unit ? html`<span class="unit">${unit}</span>` : nothing}
+        ${unit ? html`<span class="value-suffix unit">${unit}</span>` : nothing}
       </div>
     `;
   }
@@ -271,10 +271,10 @@ export class PulseLineCard extends LitElement {
 
     return html`
       <div class="value-row">
-        <span class="value">${val1}</span>
-        <span class="dual-separator">/</span>
-        <span class="value">${val2}</span>
-        ${unit ? html`<span class="unit">${unit}</span>` : nothing}
+        <span class="value value-dual">${val1}</span>
+        <span class="value-suffix dual-separator">/</span>
+        <span class="value value-dual">${val2}</span>
+        ${unit ? html`<span class="value-suffix unit">${unit}</span>` : nothing}
       </div>
     `;
   }
@@ -543,25 +543,23 @@ export class PulseLineCard extends LitElement {
         color: var(--primary-text-color);
         line-height: 1.15;
       }
-      .dual-separator {
-        font-size: 24px;
-        font-weight: 300;
-        color: var(--secondary-text-color);
-        margin: 0 2px;
-        opacity: 0.6;
-      }
-      .unit {
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--secondary-text-color);
-        margin-left: 5px;
-      }
-      .score-max {
+      .value-suffix {
         font-size: 14px;
         font-weight: 400;
         color: var(--secondary-text-color);
-        margin-left: 6px;
         opacity: 0.7;
+      }
+      .score-max {
+        margin-left: 6px;
+      }
+      .unit {
+        margin-left: 6px;
+      }
+      .dual-separator {
+        margin: 0 4px;
+      }
+      .value-dual {
+        font-size: 28px;
       }
       .supporting-row {
         font-size: 13px;
