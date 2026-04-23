@@ -251,7 +251,7 @@ cards:
     entity: sensor.steps
 ```
 
-[screenshot - comparison: with grid vs without grid]
+<img width="1169" height="800" alt="layout" src="https://github.com/user-attachments/assets/e0fcee09-796e-40ca-a168-f3fa83e24038" />
 
 ---
 
