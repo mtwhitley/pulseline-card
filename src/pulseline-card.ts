@@ -242,11 +242,17 @@ export class PulseLineCard extends LitElement {
 
   // --- Row renderers ---
 
-  private _formatValue(rawState: string): string {
+  private _normalizeNumeric(rawState: string): number {
     const precision = this._config.value_precision ?? 0;
     const num = parseFloat(rawState);
+    if (isNaN(num)) return NaN;
+    return parseFloat(num.toFixed(precision));
+  }
+
+  private _formatValue(rawState: string): string {
+    const num = this._normalizeNumeric(rawState);
     if (isNaN(num)) return rawState;
-    return num.toFixed(precision);
+    return num.toFixed(this._config.value_precision ?? 0);
   }
 
   private _renderValueRow(entity: HassEntity): TemplateResult {
@@ -296,7 +302,7 @@ export class PulseLineCard extends LitElement {
     if (!supporting || supporting.type === "none") return nothing;
 
     if (supporting.type === "kudos" && supporting.kudos_rules) {
-      const numValue = parseFloat(entity.state);
+      const numValue = this._normalizeNumeric(entity.state);
       if (isNaN(numValue)) return nothing;
       const label = this._evaluateKudos(numValue, supporting.kudos_rules);
       if (!label) return nothing;
