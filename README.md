@@ -123,6 +123,8 @@ entity: sensor.sleep_score
 name: Sleep Score
 icon: mdi:power-sleep
 accent_color: "#8b5cf6"
+display_style: score
+score_max: 100
 supporting_row:
   type: delta
 ```
@@ -142,6 +144,8 @@ entity: sensor.sleep_score
 name: Sleep Score
 icon: mdi:power-sleep
 accent_color: "#8b5cf6"
+display_style: score
+score_max: 100
 footer_row:
   type: recent_days_sparkline
 ```
@@ -159,6 +163,8 @@ entity: sensor.sleep_score
 name: Sleep Score
 icon: mdi:power-sleep
 accent_color: "#8b5cf6"
+display_style: score
+score_max: 100
 footer_row:
   type: recent_values_sparkline
   x_values: 10
