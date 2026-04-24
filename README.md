@@ -13,7 +13,7 @@ Designed for dashboards where space is limited but context still matters.
 ---
 
 <p align="center">
-  <img src="[assets/dashboard.png](https://github.com/user-attachments/assets/0d6d7bd5-0b15-4ee1-bf31-80d3ca1f6c7c)" width="800">
+  <img src="https://github.com/user-attachments/assets/0d6d7bd5-0b15-4ee1-bf31-80d3ca1f6c7c)" width="800">
 </p>
 
 ---
