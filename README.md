@@ -266,7 +266,7 @@ name: Temp / Humidity
 icon: mdi:thermometer-water
 ```
 
-<img width="528" height="196" alt="Screenshot 2026-04-23 at 10 22 21 PM" src="https://github.com/user-attachments/assets/ce21315c-72b7-4ef3-a33c-84177c00c0b1" />
+<img width="248" alt="Screenshot 2026-04-23 at 10 22 21 PM" src="https://github.com/user-attachments/assets/ce21315c-72b7-4ef3-a33c-84177c00c0b1" />
 
 ---
 
