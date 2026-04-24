@@ -326,11 +326,10 @@ export class PulseLineCard extends LitElement {
 
     const val1 = this._formatValue(entity.state);
     const val2 = this._formatValue(entity2!.state);
-    const unit1 = entity.attributes.unit_of_measurement as string | undefined;
-    const unit2 = entity2!.attributes.unit_of_measurement as string | undefined;
-    const sameUnit = unit1 && unit2 && unit1 === unit2;
+    const unit1 = (entity.attributes.unit_of_measurement as string) || undefined;
+    const unit2 = (entity2!.attributes.unit_of_measurement as string) || undefined;
 
-    if (sameUnit) {
+    if (unit1 && unit2 && unit1 === unit2) {
       // Same unit: value1 / value2 unit
       return html`
         <div class="value-row">
@@ -346,10 +345,10 @@ export class PulseLineCard extends LitElement {
     return html`
       <div class="value-row">
         <span class="value value-dual">${val1}</span>
-        ${unit1 ? html`<span class="value-suffix unit">${unit1}</span>` : nothing}
+        ${unit1 !== undefined ? html`<span class="value-suffix unit">${unit1}</span>` : nothing}
         <span class="value-suffix dual-separator">/</span>
         <span class="value value-dual">${val2}</span>
-        ${unit2 ? html`<span class="value-suffix unit">${unit2}</span>` : nothing}
+        ${unit2 !== undefined ? html`<span class="value-suffix unit">${unit2}</span>` : nothing}
       </div>
     `;
   }
@@ -585,7 +584,6 @@ export class PulseLineCard extends LitElement {
       }
       ha-card {
         padding: 10px 15px;
-        overflow: hidden;
         box-sizing: border-box;
         cursor: pointer;
       }
@@ -638,6 +636,7 @@ export class PulseLineCard extends LitElement {
         font-weight: 400;
         color: var(--secondary-text-color);
         opacity: 0.7;
+        flex-shrink: 0;
       }
       .score-max {
         margin-left: 6px;
@@ -698,6 +697,7 @@ export class PulseLineCard extends LitElement {
       }
       .footer-row {
         margin-top: 6px;
+        overflow: hidden;
       }
       .sparkline-svg {
         display: block;
