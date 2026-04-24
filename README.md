@@ -163,7 +163,7 @@ footer_row:
   x_values: 7
 ```
 
-<img width="250" alt="" src="https://github.com/user-attachments/assets/a2038b8f-439e-4a1d-b237-9cb174969c76" /><br>
+<img width="250" alt="" src="https://github.com/user-attachments/assets/a2038b8f-439e-4a1d-b237-9cb174969c76" /><br><br>
 
 
 A range with `color` can also set `accent_override: true` to make the range color become the card's effective accent color while that range is active. This affects the main icon badge, sparkline, progress bar, and any other accent-colored element. When the value moves to a different range or outside all ranges, the card reverts to its configured accent color.
@@ -196,7 +196,7 @@ footer_row:
   x_values: 7
 ```
 
-<img width="250" alt="" src="https://github.com/user-attachments/assets/9f4f755d-cff0-408b-b8c1-408ce331b4d1" />
+<img width="250" alt="" src="https://github.com/user-attachments/assets/9f4f755d-cff0-408b-b8c1-408ce331b4d1" /><br><br>
 
 ---
 
