@@ -336,6 +336,28 @@ export class PulseLineCard extends LitElement {
     const unit2 = this._getUnit(entity2!);
     const sharedUnit = unit1 !== undefined && unit2 !== undefined && unit1 === unit2;
 
+    /* eslint-disable no-console */
+    if (this._config.debug) {
+      console.info(`[pulseline-card debug] v${CARD_VERSION}`, {
+        entity: this._config.entity,
+        entity_2: this._config.entity_2,
+        unit1: unit1 ?? "none",
+        unit2: unit2 ?? "none",
+        sharedUnit,
+        rawUnit1: entity.attributes.unit_of_measurement,
+        rawUnit2: entity2!.attributes.unit_of_measurement,
+      });
+    }
+    /* eslint-enable no-console */
+
+    const debugRow = this._config.debug
+      ? html`<div class="debug-row">
+          entity: ${this._config.entity} | entity_2: ${this._config.entity_2} |
+          unit1: ${unit1 ?? "none"} | unit2: ${unit2 ?? "none"} |
+          sharedUnit: ${sharedUnit} | v${CARD_VERSION}
+        </div>`
+      : nothing;
+
     return html`
       <div class="value-row">
         <span class="value value-dual">${val1}</span>
@@ -345,6 +367,7 @@ export class PulseLineCard extends LitElement {
         ${!sharedUnit && unit2 !== undefined ? html`<span class="value-suffix unit">${unit2}</span>` : nothing}
         ${sharedUnit ? html`<span class="value-suffix unit">${unit1}</span>` : nothing}
       </div>
+      ${debugRow}
     `;
   }
 
@@ -713,6 +736,16 @@ export class PulseLineCard extends LitElement {
         font-size: 13px;
         color: var(--error-color, #ef4444);
         padding: 8px 0;
+      }
+      .debug-row {
+        font-size: 9px;
+        font-family: monospace;
+        color: var(--secondary-text-color);
+        opacity: 0.5;
+        margin-top: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       @media (max-width: 480px) {
         .content {

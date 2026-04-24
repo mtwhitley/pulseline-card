@@ -27,6 +27,7 @@ export interface PulseLineCardConfig {
   value_precision?: number;
   supporting_row?: SupportingRowConfig;
   footer_row?: FooterRowConfig;
+  debug?: boolean;
 }
 
 export interface HassEntity {
