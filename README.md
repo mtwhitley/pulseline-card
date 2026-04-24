@@ -196,7 +196,7 @@ footer_row:
   x_values: 7
 ```
 
-<img width="472" height="290" alt="" src="https://github.com/user-attachments/assets/9f4f755d-cff0-408b-b8c1-408ce331b4d1" />
+<img width="250" alt="" src="https://github.com/user-attachments/assets/9f4f755d-cff0-408b-b8c1-408ce331b4d1" />
 
 ---
 
