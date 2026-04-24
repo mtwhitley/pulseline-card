@@ -6,12 +6,12 @@ PulseLine is designed to present meaningful information in a small footprint whi
 
 Designed for dashboards where space is limited but context still matters.
 
-<img src="https://raw.githubusercontent.com/mtwhitley/pulseline-card/main/assets/preview.png" width="600">
+<img src="https://raw.githubusercontent.com/mtwhitley/pulseline-card/main/assets/preview.png" width="600" alt="">
 
 ---
 
 ### Full Dashboard Example
-<img src="https://github.com/user-attachments/assets/0d6d7bd5-0b15-4ee1-bf31-80d3ca1f6c7c" width="800">
+<img src="https://github.com/user-attachments/assets/0d6d7bd5-0b15-4ee1-bf31-80d3ca1f6c7c" width="800" alt="">
 
 ---
 
@@ -137,6 +137,35 @@ supporting_row:
 
 Each range can optionally include an `icon` (MDI name) and a `color` (CSS color value). The behavior depends on which fields are present. With both `icon` and `color`, the icon badge and label text both use the range color. With `icon` only, the badge uses the card's accent color and the label text keeps its default styling. With `color` only, only the label text is colored. With neither, the range renders as a plain text label.
 
+```yaml
+type: custom:pulseline-card
+entity: sensor.ag_one_pm_2_5_aqi
+name: PM 2.5
+icon: mdi:dots-grid
+accent_color: "#00ff00"
+supporting_row:
+  type: kudos
+  kudos_rules:
+    - min: 0
+      max: 50
+      label: Good
+    - min: 51
+      max: 100
+      label: Fair
+      color: "#ffff00"
+      icon: mdi:arrow-top-right-thick
+    - min: 101
+      label: Poor
+      color: "#ff0000"
+      icon: mdi:arrow-up-bold
+footer_row:
+  type: sparkline_values
+  x_values: 7
+```
+
+<img width="250" alt="" src="https://github.com/user-attachments/assets/a2038b8f-439e-4a1d-b237-9cb174969c76" />
+
+
 A range with `color` can also set `accent_override: true` to make the range color become the card's effective accent color while that range is active. This affects the main icon badge, sparkline, progress bar, and any other accent-colored element. When the value moves to a different range or outside all ranges, the card reverts to its configured accent color.
 
 ```yaml
@@ -167,7 +196,7 @@ footer_row:
   x_values: 7
 ```
 
-<img width="250" alt="Screenshot 2026-04-24 at 2 21 36 PM" src="https://github.com/user-attachments/assets/e777b5fe-3066-4f2a-a0c2-c5e3b071765b" />
+<img width="472" height="290" alt="" src="https://github.com/user-attachments/assets/9f4f755d-cff0-408b-b8c1-408ce331b4d1" />
 
 ---
 
