@@ -4,6 +4,7 @@ export interface KudosRule {
   label: string;
   icon?: string;
   color?: string;
+  accent_override?: boolean;
 }
 
 export interface SupportingRowConfig {

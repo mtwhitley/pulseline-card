@@ -100,6 +100,9 @@ export class PulseLineCard extends LitElement {
           if (rule.color != null && typeof rule.color !== "string") {
             throw new Error("Invalid configuration: kudos rule 'color' must be a string if provided");
           }
+          if (rule.accent_override != null && typeof rule.accent_override !== "boolean") {
+            throw new Error("Invalid configuration: kudos rule 'accent_override' must be a boolean if provided");
+          }
         }
       }
     }
@@ -239,7 +242,21 @@ export class PulseLineCard extends LitElement {
   }
 
   private _getAccentColor(): string {
+    const override = this._getKudosAccentOverride();
+    if (override) return override;
     return this._config.accent_color || DEFAULT_ACCENT_COLOR;
+  }
+
+  private _getKudosAccentOverride(): string | null {
+    const supporting = this._config?.supporting_row;
+    if (!supporting || supporting.type !== "kudos" || !supporting.kudos_rules) return null;
+    const entity = this._getEntity();
+    if (!entity || this._isEntityUnavailable(entity)) return null;
+    const numValue = this._normalizeNumeric(entity.state);
+    if (isNaN(numValue)) return null;
+    const rule = this._evaluateKudos(numValue, supporting.kudos_rules);
+    if (!rule || !rule.color || !rule.accent_override) return null;
+    return rule.color;
   }
 
   private _getTitle(entity?: HassEntity): string {

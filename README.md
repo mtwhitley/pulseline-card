@@ -137,6 +137,8 @@ supporting_row:
 
 Each range can optionally include an `icon` (MDI name) and a `color` (CSS color value). The behavior depends on which fields are present. With both `icon` and `color`, the icon badge and label text both use the range color. With `icon` only, the badge uses the card's accent color and the label text keeps its default styling. With `color` only, only the label text is colored. With neither, the range renders as a plain text label.
 
+A range with `color` can also set `accent_override: true` to make the range color become the card's effective accent color while that range is active. This affects the main icon badge, sparkline, progress bar, and any other accent-colored element. When the value moves to a different range or outside all ranges, the card reverts to its configured accent color.
+
 ```yaml
 type: custom:pulseline-card
 entity: sensor.ag_one_pm_2_5_aqi
@@ -154,10 +156,12 @@ supporting_row:
       label: Fair
       color: "#ffff00"
       icon: mdi:arrow-top-right-thick
+      accent_override: true
     - min: 101
       label: Poor
       color: "#ff0000"
       icon: mdi:arrow-up-bold
+      accent_override: true
 footer_row:
   type: sparkline_values
   x_values: 7
