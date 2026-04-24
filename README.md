@@ -1,10 +1,13 @@
 # PulseLine Card
 
-A compact, data-dense custom card for Home Assistant that combines a primary metric with contextual insights like trends, deltas, and status labels. It also supports paired metrics with intelligent handling of same-unit and mixed-unit displays.
+A compact, data-dense custom card for Home Assistant that combines a primary metric with trends, deltas, and status labels. It also supports paired metrics with intelligent handling of same-unit and mixed-unit displays.
 
 PulseLine is designed to present meaningful information in a small footprint while maintaining strong visual balance and clarity.
 
+Designed for dashboards where space is limited but context still matters.
 ![Preview](assets/preview.png)
+
+---
 
 <img width="2092" height="1546" alt="" src="https://github.com/user-attachments/assets/0d6d7bd5-0b15-4ee1-bf31-80d3ca1f6c7c" />
 
