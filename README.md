@@ -4,6 +4,8 @@ A compact, data-dense custom card for Home Assistant that combines a primary met
 
 PulseLine is designed to present meaningful information in a small footprint while maintaining strong visual balance and clarity.
 
+![Preview](assets/preview.png)
+
 <img width="2092" height="1546" alt="" src="https://github.com/user-attachments/assets/0d6d7bd5-0b15-4ee1-bf31-80d3ca1f6c7c" />
 
 ---
