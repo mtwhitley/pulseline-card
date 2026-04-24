@@ -10,7 +10,7 @@ export interface SupportingRowConfig {
 }
 
 export interface FooterRowConfig {
-  type: "none" | "recent_days_sparkline" | "recent_values_sparkline" | "progress_bar";
+  type: "none" | "sparkline_days" | "sparkline_values" | "progress_bar";
   x_values?: number;
 }
 

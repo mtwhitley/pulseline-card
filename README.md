@@ -142,7 +142,7 @@ supporting_row:
 
 Delta shows the net change across a time window, not just the difference from the previous value. It is calculated as the last value minus the first value in the selected data set.
 
-The data set depends on the footer configuration. When a `recent_values_sparkline` footer is present, delta uses the same values shown in that sparkline — the last N values, controlled by `x_values` (default 7). When a `recent_days_sparkline` footer is present, delta uses the same daily bucket averages, covering up to 7 days.
+The data set depends on the footer configuration. When a `sparkline_values` footer is present, delta uses the same values shown in that sparkline — the last N values, controlled by `x_values` (default 7). When a `sparkline_days` footer is present, delta uses the same daily bucket averages, covering up to 7 days.
 
 When no footer is configured, delta uses a fixed internal window of the 7 most recent distinct values. This is not configurable without adding a footer.
 
@@ -167,7 +167,7 @@ supporting_row:
 
 ## Footer Row
 
-### Recent Days Sparkline
+### Sparkline - Recent Days
 
 The recent days sparkline shows a 7-day trend using daily aggregated averages. Each point represents the mean value for that calendar day, derived from recorder statistics when available and falling back to raw state history otherwise.
 
@@ -182,7 +182,7 @@ accent_color: "#8b5cf6"
 display_style: score
 score_max: 100
 footer_row:
-  type: recent_days_sparkline
+  type: sparkline_days
 ```
 
 <img width="247" height="141" alt="" src="https://github.com/user-attachments/assets/2547458d-ce03-4cd0-a43c-eb61e60d1a1a" />
@@ -190,7 +190,7 @@ footer_row:
 
 ---
 
-### Recent Values Sparkline
+### Sparkline - Recent Values
 
 The recent values sparkline plots the last N distinct recorded values, ordered chronologically. The default is 7 values, configurable up to 14 via `x_values`.
 
@@ -205,7 +205,7 @@ accent_color: "#8b5cf6"
 display_style: score
 score_max: 100
 footer_row:
-  type: recent_values_sparkline
+  type: sparkline_values
   x_values: 10
 ```
 

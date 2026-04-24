@@ -101,10 +101,10 @@ export class PulseLineCard extends LitElement {
     // Footer row validation
     if (config.footer_row) {
       const fType = config.footer_row.type;
-      if (fType !== "none" && fType !== "recent_days_sparkline" && fType !== "recent_values_sparkline" && fType !== "progress_bar") {
-        throw new Error("Invalid configuration: footer_row.type must be 'none', 'recent_days_sparkline', 'recent_values_sparkline', or 'progress_bar'");
+      if (fType !== "none" && fType !== "sparkline_days" && fType !== "sparkline_values" && fType !== "progress_bar") {
+        throw new Error("Invalid configuration: footer_row.type must be 'none', 'sparkline_days', 'sparkline_values', or 'progress_bar'");
       }
-      if (fType === "recent_values_sparkline" && config.footer_row.x_values != null) {
+      if (fType === "sparkline_values" && config.footer_row.x_values != null) {
         if (typeof config.footer_row.x_values !== "number" || config.footer_row.x_values < 2 || config.footer_row.x_values > MAX_X_VALUES) {
           throw new Error(`Invalid configuration: x_values must be a number between 2 and ${MAX_X_VALUES}`);
         }
@@ -119,7 +119,7 @@ export class PulseLineCard extends LitElement {
 
   private _computeRowSize(): number {
     const footerType = this._config?.footer_row?.type ?? "none";
-    if (footerType === "recent_days_sparkline" || footerType === "recent_values_sparkline") {
+    if (footerType === "sparkline_days" || footerType === "sparkline_values") {
       return 3;
     }
     return 2;
@@ -148,14 +148,14 @@ export class PulseLineCard extends LitElement {
 
   private _needsRecentValues(): boolean {
     const footerType = this._config?.footer_row?.type;
-    if (footerType === "recent_values_sparkline") return true;
+    if (footerType === "sparkline_values") return true;
     const supportType = this._config?.supporting_row?.type;
-    if (supportType === "delta" && footerType !== "recent_days_sparkline") return true;
+    if (supportType === "delta" && footerType !== "sparkline_days") return true;
     return false;
   }
 
   private _needsDailyBuckets(): boolean {
-    return this._config?.footer_row?.type === "recent_days_sparkline";
+    return this._config?.footer_row?.type === "sparkline_days";
   }
 
   private _scheduleDataFetch(): void {
@@ -371,7 +371,7 @@ export class PulseLineCard extends LitElement {
 
   private _getDeltaValues(): number[] {
     const footerType = this._config?.footer_row?.type;
-    if (footerType === "recent_days_sparkline") {
+    if (footerType === "sparkline_days") {
       return this._dailyBuckets.filter((v): v is number => v != null);
     }
     return this._recentValues;
@@ -420,10 +420,10 @@ export class PulseLineCard extends LitElement {
     const footer = this._config.footer_row;
     if (!footer || footer.type === "none") return nothing;
 
-    if (footer.type === "recent_days_sparkline") {
+    if (footer.type === "sparkline_days") {
       return this._renderSparkline(this._dailyBuckets, accent, true);
     }
-    if (footer.type === "recent_values_sparkline") {
+    if (footer.type === "sparkline_values") {
       return this._renderSparkline(this._recentValues, accent, false);
     }
     if (footer.type === "progress_bar") {
