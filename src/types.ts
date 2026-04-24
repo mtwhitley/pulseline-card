@@ -2,6 +2,8 @@ export interface KudosRule {
   min: number;
   max?: number;
   label: string;
+  icon?: string;
+  color?: string;
 }
 
 export interface SupportingRowConfig {

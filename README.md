@@ -135,6 +135,24 @@ supporting_row:
 
 <img width="250" height="121" alt="" src="https://github.com/user-attachments/assets/cfc971c9-ab72-41ff-a74a-2b4ac8d67827" />
 
+Each range can optionally include an `icon` (MDI name) and a `color` (CSS color value). The behavior depends on which fields are present. With both `icon` and `color`, the icon badge and label text both use the range color. With `icon` only, the badge uses the card's accent color and the label text keeps its default styling. With `color` only, only the label text is colored. With neither, the range renders as a plain text label.
+
+```yaml
+supporting_row:
+  type: kudos
+  kudos_rules:
+    - min: 80
+      label: Great
+      icon: mdi:star
+      color: "#4caf50"
+    - min: 50
+      max: 79
+      label: Fair
+      icon: mdi:thumb-up
+    - min: 0
+      max: 49
+      label: Keep Going
+```
 
 ---
 

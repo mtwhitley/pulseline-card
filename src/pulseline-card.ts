@@ -94,6 +94,12 @@ export class PulseLineCard extends LitElement {
           if (rule.max != null && typeof rule.max !== "number") {
             throw new Error("Invalid configuration: kudos rule 'max' must be a number if provided");
           }
+          if (rule.icon != null && typeof rule.icon !== "string") {
+            throw new Error("Invalid configuration: kudos rule 'icon' must be a string if provided");
+          }
+          if (rule.color != null && typeof rule.color !== "string") {
+            throw new Error("Invalid configuration: kudos rule 'color' must be a string if provided");
+          }
         }
       }
     }
@@ -257,9 +263,9 @@ export class PulseLineCard extends LitElement {
     return false;
   }
 
-  private _evaluateKudos(value: number, rules: KudosRule[]): string | null {
+  private _evaluateKudos(value: number, rules: KudosRule[]): KudosRule | null {
     for (const rule of rules) {
-      if (value >= rule.min && (rule.max == null || value <= rule.max)) return rule.label;
+      if (value >= rule.min && (rule.max == null || value <= rule.max)) return rule;
     }
     return null;
   }
@@ -385,9 +391,9 @@ export class PulseLineCard extends LitElement {
     if (supporting.type === "kudos" && supporting.kudos_rules) {
       const numValue = this._normalizeNumeric(entity.state);
       if (isNaN(numValue)) return nothing;
-      const label = this._evaluateKudos(numValue, supporting.kudos_rules);
-      if (!label) return nothing;
-      return html`<div class="supporting-row">${label}</div>`;
+      const rule = this._evaluateKudos(numValue, supporting.kudos_rules);
+      if (!rule) return nothing;
+      return this._renderKudos(rule);
     }
 
     if (supporting.type === "delta") {
@@ -395,6 +401,35 @@ export class PulseLineCard extends LitElement {
     }
 
     return nothing;
+  }
+
+  private _renderKudos(rule: KudosRule): TemplateResult {
+    const hasIcon = !!rule.icon;
+    const iconColor = rule.color || this._getAccentColor();
+
+    if (hasIcon && rule.color) {
+      return html`<div class="supporting-row kudos" style="color: ${rule.color};">
+        <div class="kudos-badge" style="background: ${iconColor}33; color: ${iconColor};">
+          <ha-icon .icon=${rule.icon!}></ha-icon>
+        </div>
+        <span>${rule.label}</span>
+      </div>`;
+    }
+
+    if (hasIcon) {
+      return html`<div class="supporting-row kudos">
+        <div class="kudos-badge" style="background: ${iconColor}33; color: ${iconColor};">
+          <ha-icon .icon=${rule.icon!}></ha-icon>
+        </div>
+        <span>${rule.label}</span>
+      </div>`;
+    }
+
+    if (rule.color) {
+      return html`<div class="supporting-row" style="color: ${rule.color};">${rule.label}</div>`;
+    }
+
+    return html`<div class="supporting-row">${rule.label}</div>`;
   }
 
   private _getDeltaValues(): number[] {
@@ -683,6 +718,23 @@ export class PulseLineCard extends LitElement {
         color: var(--secondary-text-color);
         margin-top: 6px;
         line-height: 1.2;
+      }
+      .kudos {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .kudos-badge {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .kudos-badge ha-icon {
+        --mdc-icon-size: 12px;
       }
       .delta {
         display: flex;
