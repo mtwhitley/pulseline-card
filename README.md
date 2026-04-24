@@ -10,6 +10,7 @@ Designed for dashboards where space is limited but context still matters.
 
 ---
 
+### Full Dashboard Example
 <img src="https://github.com/user-attachments/assets/0d6d7bd5-0b15-4ee1-bf31-80d3ca1f6c7c" width="800">
 
 ---
