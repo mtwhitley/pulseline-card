@@ -300,13 +300,19 @@ export class PulseLineCard extends LitElement {
       `;
     }
 
-    const unit = entity.attributes.unit_of_measurement as string | undefined;
+    const unit = this._getUnit(entity);
     return html`
       <div class="value-row">
         <span class="value">${formatted}</span>
-        ${unit ? html`<span class="value-suffix unit">${unit}</span>` : nothing}
+        ${unit !== undefined ? html`<span class="value-suffix unit">${unit}</span>` : nothing}
       </div>
     `;
+  }
+
+  private _getUnit(entity: HassEntity): string | undefined {
+    const raw = entity.attributes.unit_of_measurement;
+    if (typeof raw !== "string" || raw.trim() === "") return undefined;
+    return raw;
   }
 
   private _renderDualValueRow(entity: HassEntity): TemplateResult {
@@ -326,29 +332,18 @@ export class PulseLineCard extends LitElement {
 
     const val1 = this._formatValue(entity.state);
     const val2 = this._formatValue(entity2!.state);
-    const unit1 = (entity.attributes.unit_of_measurement as string) || undefined;
-    const unit2 = (entity2!.attributes.unit_of_measurement as string) || undefined;
+    const unit1 = this._getUnit(entity);
+    const unit2 = this._getUnit(entity2!);
+    const sharedUnit = unit1 !== undefined && unit2 !== undefined && unit1 === unit2;
 
-    if (unit1 && unit2 && unit1 === unit2) {
-      // Same unit: value1 / value2 unit
-      return html`
-        <div class="value-row">
-          <span class="value value-dual">${val1}</span>
-          <span class="value-suffix dual-separator">/</span>
-          <span class="value value-dual">${val2}</span>
-          <span class="value-suffix unit">${unit1}</span>
-        </div>
-      `;
-    }
-
-    // Different or partial units: value1 [unit1] / value2 [unit2]
     return html`
       <div class="value-row">
         <span class="value value-dual">${val1}</span>
-        ${unit1 !== undefined ? html`<span class="value-suffix unit">${unit1}</span>` : nothing}
+        ${!sharedUnit && unit1 !== undefined ? html`<span class="value-suffix unit">${unit1}</span>` : nothing}
         <span class="value-suffix dual-separator">/</span>
         <span class="value value-dual">${val2}</span>
-        ${unit2 !== undefined ? html`<span class="value-suffix unit">${unit2}</span>` : nothing}
+        ${!sharedUnit && unit2 !== undefined ? html`<span class="value-suffix unit">${unit2}</span>` : nothing}
+        ${sharedUnit ? html`<span class="value-suffix unit">${unit1}</span>` : nothing}
       </div>
     `;
   }
