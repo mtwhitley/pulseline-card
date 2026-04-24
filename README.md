@@ -4,7 +4,7 @@ A compact, data-dense custom card for Home Assistant that combines a primary met
 
 PulseLine is designed to present meaningful information in a small footprint while maintaining strong visual balance and clarity.
 
-<img width="2092" height="1546" alt="Screenshot 2026-04-23 at 10 22 43 PM" src="https://github.com/user-attachments/assets/0d6d7bd5-0b15-4ee1-bf31-80d3ca1f6c7c" />
+<img width="2092" height="1546" alt="" src="https://github.com/user-attachments/assets/0d6d7bd5-0b15-4ee1-bf31-80d3ca1f6c7c" />
 
 ---
 
@@ -63,7 +63,7 @@ entity: sensor.sleep_score
 name: Sleep Score
 ```
 
-<img width="244" height="99" alt="Screenshot 2026-04-23 at 10 17 30 AM" src="https://github.com/user-attachments/assets/95c9c353-0225-4d0a-b1c0-33031a49b2ee" />
+<img width="244" height="99" alt="" src="https://github.com/user-attachments/assets/95c9c353-0225-4d0a-b1c0-33031a49b2ee" />
 
 ---
 
@@ -126,7 +126,7 @@ supporting_row:
       label: Poor
 ```
 
-<img width="250" height="121" alt="Screenshot 2026-04-23 at 10 18 58 AM" src="https://github.com/user-attachments/assets/cfc971c9-ab72-41ff-a74a-2b4ac8d67827" />
+<img width="250" height="121" alt="" src="https://github.com/user-attachments/assets/cfc971c9-ab72-41ff-a74a-2b4ac8d67827" />
 
 
 ---
@@ -153,7 +153,7 @@ supporting_row:
   type: delta
 ```
 
-<img width="247" height="118" alt="Screenshot 2026-04-23 at 12 56 45 PM" src="https://github.com/user-attachments/assets/ceef2aa4-0d7c-406b-b535-cf90f3469137" />
+<img width="247" height="118" alt="" src="https://github.com/user-attachments/assets/ceef2aa4-0d7c-406b-b535-cf90f3469137" />
 
 
 ---
@@ -178,7 +178,7 @@ footer_row:
   type: recent_days_sparkline
 ```
 
-<img width="247" height="141" alt="Screenshot 2026-04-23 at 12 58 08 PM" src="https://github.com/user-attachments/assets/2547458d-ce03-4cd0-a43c-eb61e60d1a1a" />
+<img width="247" height="141" alt="" src="https://github.com/user-attachments/assets/2547458d-ce03-4cd0-a43c-eb61e60d1a1a" />
 
 
 ---
@@ -202,7 +202,7 @@ footer_row:
   x_values: 10
 ```
 
-<img width="250" height="132" alt="Screenshot 2026-04-23 at 12 58 29 PM" src="https://github.com/user-attachments/assets/f3c42af5-3e78-43a6-88cc-e7eeb6292da1" />
+<img width="250" height="132" alt="" src="https://github.com/user-attachments/assets/f3c42af5-3e78-43a6-88cc-e7eeb6292da1" />
 
 
 ---
@@ -225,7 +225,7 @@ footer_row:
   type: progress_bar
 ```
 
-<img width="244" height="102" alt="Screenshot 2026-04-23 at 12 58 55 PM" src="https://github.com/user-attachments/assets/9051215c-0a6f-42a5-9a01-3bc0682de68a" />
+<img width="244" height="102" alt="" src="https://github.com/user-attachments/assets/9051215c-0a6f-42a5-9a01-3bc0682de68a" />
 
 
 ---
@@ -253,7 +253,7 @@ accent_color: "#ff0000"
 value_precision: 0
 ```
 
-<img width="248" height="90" alt="Screenshot 2026-04-23 at 1 02 40 PM" src="https://github.com/user-attachments/assets/c61864ce-7f54-4e17-9f73-1fa0eebb4198" />
+<img width="248" height="90" alt="" src="https://github.com/user-attachments/assets/c61864ce-7f54-4e17-9f73-1fa0eebb4198" />
 
 #### Mixed-unit example
 
@@ -266,7 +266,7 @@ name: Temp / Humidity
 icon: mdi:thermometer-water
 ```
 
-<img width="248" alt="Screenshot 2026-04-23 at 10 22 21 PM" src="https://github.com/user-attachments/assets/ce21315c-72b7-4ef3-a33c-84177c00c0b1" />
+<img width="248" alt="" src="https://github.com/user-attachments/assets/ce21315c-72b7-4ef3-a33c-84177c00c0b1" />
 
 ---
 
@@ -293,7 +293,7 @@ supporting_row:
       label: High
 ```
 
-<img width="244" height="112" alt="Screenshot 2026-04-23 at 1 02 03 PM" src="https://github.com/user-attachments/assets/3b417db2-f900-49cb-b334-f95a53f053b3" />
+<img width="244" height="112" alt="" src="https://github.com/user-attachments/assets/3b417db2-f900-49cb-b334-f95a53f053b3" />
 
 ---
 
@@ -356,7 +356,7 @@ cards:
     entity: sensor.steps
 ```
 
-<img width="1169" height="800" alt="layout" src="https://github.com/user-attachments/assets/e0fcee09-796e-40ca-a168-f3fa83e24038" />
+<img width="1169" height="800" alt="" src="https://github.com/user-attachments/assets/e0fcee09-796e-40ca-a168-f3fa83e24038" />
 
 ---
 
