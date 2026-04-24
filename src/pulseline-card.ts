@@ -336,28 +336,6 @@ export class PulseLineCard extends LitElement {
     const unit2 = this._getUnit(entity2!);
     const sharedUnit = unit1 !== undefined && unit2 !== undefined && unit1 === unit2;
 
-    /* eslint-disable no-console */
-    if (this._config.debug) {
-      console.info(`[pulseline-card debug] v${CARD_VERSION}`, {
-        entity: this._config.entity,
-        entity_2: this._config.entity_2,
-        unit1: unit1 ?? "none",
-        unit2: unit2 ?? "none",
-        sharedUnit,
-        rawUnit1: entity.attributes.unit_of_measurement,
-        rawUnit2: entity2!.attributes.unit_of_measurement,
-      });
-    }
-    /* eslint-enable no-console */
-
-    const debugRow = this._config.debug
-      ? html`<div class="debug-row">
-          entity: ${this._config.entity} | entity_2: ${this._config.entity_2} |
-          unit1: ${unit1 ?? "none"} | unit2: ${unit2 ?? "none"} |
-          sharedUnit: ${sharedUnit} | v${CARD_VERSION}
-        </div>`
-      : nothing;
-
     return html`
       <div class="value-row">
         <span class="value value-dual">${val1}</span>
@@ -367,7 +345,6 @@ export class PulseLineCard extends LitElement {
         ${!sharedUnit && unit2 !== undefined ? html`<span class="value-suffix unit">${unit2}</span>` : nothing}
         ${sharedUnit ? html`<span class="value-suffix unit">${unit1}</span>` : nothing}
       </div>
-      ${debugRow}
     `;
   }
 
@@ -602,6 +579,7 @@ export class PulseLineCard extends LitElement {
       }
       ha-card {
         padding: 10px 15px;
+        overflow: hidden;
         box-sizing: border-box;
         cursor: pointer;
       }
@@ -654,7 +632,6 @@ export class PulseLineCard extends LitElement {
         font-weight: 400;
         color: var(--secondary-text-color);
         opacity: 0.7;
-        flex-shrink: 0;
       }
       .score-max {
         margin-left: 6px;
@@ -667,27 +644,6 @@ export class PulseLineCard extends LitElement {
       }
       .value-dual {
         font-size: 28px;
-      }
-      @supports (container-type: inline-size) {
-        .text-block {
-          container-type: inline-size;
-        }
-        .value {
-          font-size: clamp(26px, 7cqi, 32px);
-        }
-        .value-suffix {
-          font-size: clamp(12px, 3cqi, 14px);
-        }
-        .score-max,
-        .unit {
-          margin-left: clamp(4px, 1.2cqi, 6px);
-        }
-        .dual-separator {
-          margin: 0 clamp(2px, 1cqi, 4px);
-        }
-        .value-dual {
-          font-size: clamp(22px, 6cqi, 28px);
-        }
       }
       .supporting-row {
         font-size: 13px;
@@ -715,7 +671,6 @@ export class PulseLineCard extends LitElement {
       }
       .footer-row {
         margin-top: 6px;
-        overflow: hidden;
       }
       .sparkline-svg {
         display: block;
@@ -737,17 +692,23 @@ export class PulseLineCard extends LitElement {
         color: var(--error-color, #ef4444);
         padding: 8px 0;
       }
-      .debug-row {
-        font-size: 9px;
-        font-family: monospace;
-        color: var(--secondary-text-color);
-        opacity: 0.5;
-        margin-top: 4px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
       @media (max-width: 480px) {
+        .value {
+          font-size: 26px;
+        }
+        .value-dual {
+          font-size: 24px;
+        }
+        .value-suffix {
+          font-size: 12px;
+        }
+        .score-max,
+        .unit {
+          margin-left: 4px;
+        }
+        .dual-separator {
+          margin: 0 2px;
+        }
         .content {
           gap: 10px;
         }
