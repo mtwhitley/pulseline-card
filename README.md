@@ -133,7 +133,7 @@ supporting_row:
       label: Poor
 ```
 
-<img width="250" height="121" alt="" src="https://github.com/user-attachments/assets/cfc971c9-ab72-41ff-a74a-2b4ac8d67827" />
+<img width="250" height="121" alt="" src="https://github.com/user-attachments/assets/cfc971c9-ab72-41ff-a74a-2b4ac8d67827" /><br>
 
 Each range can optionally include an `icon` (MDI name) and a `color` (CSS color value). The behavior depends on which fields are present. With both `icon` and `color`, the icon badge and label text both use the range color. With `icon` only, the badge uses the card's accent color and the label text keeps its default styling. With `color` only, only the label text is colored. With neither, the range renders as a plain text label.
 
@@ -163,7 +163,7 @@ footer_row:
   x_values: 7
 ```
 
-<img width="250" alt="" src="https://github.com/user-attachments/assets/a2038b8f-439e-4a1d-b237-9cb174969c76" />
+<img width="250" alt="" src="https://github.com/user-attachments/assets/a2038b8f-439e-4a1d-b237-9cb174969c76" /><br>
 
 
 A range with `color` can also set `accent_override: true` to make the range color become the card's effective accent color while that range is active. This affects the main icon badge, sparkline, progress bar, and any other accent-colored element. When the value moves to a different range or outside all ranges, the card reverts to its configured accent color.
