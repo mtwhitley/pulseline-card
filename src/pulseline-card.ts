@@ -634,7 +634,7 @@ export class PulseLineCard extends LitElement {
             </div>
             <div class="supporting-row kudos" style="color: ${accent};">
               <div class="kudos-badge" style="background: ${accent}33; color: ${accent};">
-                <ha-icon .icon=${"mdi:shoe-print"}></ha-icon>
+                <ha-icon .icon=${"mdi:check-decagram"}></ha-icon>
               </div>
               <span>Great Job</span>
             </div>
@@ -801,6 +801,7 @@ export class PulseLineCard extends LitElement {
       }
       .kudos-badge ha-icon {
         --mdc-icon-size: 12px;
+        transform: translateY(-0.5px);
       }
       .delta {
         display: flex;
@@ -818,6 +819,7 @@ export class PulseLineCard extends LitElement {
       }
       .delta-badge ha-icon {
         --mdc-icon-size: 12px;
+        transform: translateY(-0.5px);
       }
       .footer-row {
         margin-top: 6px;
