@@ -6,11 +6,15 @@ PulseLine is designed to present meaningful information in a small footprint whi
 
 Designed for dashboards where space is limited but context still matters.
 
-![Preview](assets/preview.png)
+<p align="center">
+  <img src="assets/preview.png" width="600">
+</p>
 
 ---
 
-<img width="2092" height="1546" alt="" src="https://github.com/user-attachments/assets/0d6d7bd5-0b15-4ee1-bf31-80d3ca1f6c7c" />
+<p align="center">
+  <img src="[assets/dashboard.png](https://github.com/user-attachments/assets/0d6d7bd5-0b15-4ee1-bf31-80d3ca1f6c7c)" width="800">
+</p>
 
 ---
 
