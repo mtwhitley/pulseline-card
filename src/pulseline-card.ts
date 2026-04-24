@@ -911,9 +911,13 @@ win.customCards = win.customCards || [];
     type: string;
     name: string;
     description: string;
+    preview: boolean;
+    documentationURL: string;
   }>
 ).push({
   type: CARD_NAME,
   name: "PulseLine Card",
   description: "A compact metric and trend card with deltas, sparklines, and contextual insights.",
+  preview: true,
+  documentationURL: "https://github.com/mtwhitley/pulseline-card",
 });
