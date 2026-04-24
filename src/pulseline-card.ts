@@ -692,6 +692,24 @@ export class PulseLineCard extends LitElement {
         color: var(--error-color, #ef4444);
         padding: 8px 0;
       }
+      @media (min-width: 481px) and (max-width: 900px) {
+        .value {
+          font-size: 30px;
+        }
+        .value-dual {
+          font-size: 26px;
+        }
+        .value-suffix {
+          font-size: 13px;
+        }
+        .score-max,
+        .unit {
+          margin-left: 5px;
+        }
+        .dual-separator {
+          margin: 0 3px;
+        }
+      }
       @media (max-width: 480px) {
         .value {
           font-size: 26px;
