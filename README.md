@@ -138,21 +138,32 @@ supporting_row:
 Each range can optionally include an `icon` (MDI name) and a `color` (CSS color value). The behavior depends on which fields are present. With both `icon` and `color`, the icon badge and label text both use the range color. With `icon` only, the badge uses the card's accent color and the label text keeps its default styling. With `color` only, only the label text is colored. With neither, the range renders as a plain text label.
 
 ```yaml
+type: custom:pulseline-card
+entity: sensor.ag_one_pm_2_5_aqi
+name: PM 2.5
+icon: mdi:dots-grid
+accent_color: "#00ff00"
 supporting_row:
   type: kudos
   kudos_rules:
-    - min: 80
-      label: Great
-      icon: mdi:star
-      color: "#4caf50"
-    - min: 50
-      max: 79
-      label: Fair
-      icon: mdi:thumb-up
     - min: 0
-      max: 49
-      label: Keep Going
+      max: 50
+      label: Good
+    - min: 51
+      max: 100
+      label: Fair
+      color: "#ffff00"
+      icon: mdi:arrow-top-right-thick
+    - min: 101
+      label: Poor
+      color: "#ff0000"
+      icon: mdi:arrow-up-bold
+footer_row:
+  type: sparkline_values
+  x_values: 7
 ```
+
+<img width="250" alt="Screenshot 2026-04-24 at 2 21 36 PM" src="https://github.com/user-attachments/assets/e777b5fe-3066-4f2a-a0c2-c5e3b071765b" />
 
 ---
 
