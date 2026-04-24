@@ -139,7 +139,7 @@ Each range can optionally include an `icon` (MDI name) and a `color` (CSS color 
 
 ```yaml
 type: custom:pulseline-card
-entity: sensor.ag_one_pm_2_5_aqi
+entity: sensor.pm25
 name: PM 2.5
 icon: mdi:dots-grid
 accent_color: "#00ff00"
@@ -170,7 +170,7 @@ A range with `color` can also set `accent_override: true` to make the range colo
 
 ```yaml
 type: custom:pulseline-card
-entity: sensor.ag_one_pm_2_5_aqi
+entity: sensor.pm25
 name: PM 2.5
 icon: mdi:dots-grid
 accent_color: "#00ff00"
