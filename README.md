@@ -1,6 +1,6 @@
 # PulseLine Card
 
-A compact, data-dense custom card for Home Assistant that combines a primary metric with contextual insights like trends, deltas, and status labels.
+A compact, data-dense custom card for Home Assistant that combines a primary metric with contextual insights like trends, deltas, and status labels. It also supports paired metrics with intelligent handling of same-unit and mixed-unit displays.
 
 PulseLine is designed to present meaningful information in a small footprint while maintaining strong visual balance and clarity.
 
@@ -232,9 +232,11 @@ footer_row:
 
 ## Dual Mode
 
-Dual mode displays two entity values side by side in a fixed `value1 / value2` format. It is designed for naturally paired metrics like blood pressure (systolic/diastolic).
+Dual mode displays two entity values side by side in a ratio-style layout. It supports both same-unit pairs (like blood pressure) and mixed-unit pairs (like temperature and humidity).
 
-Only the first entity's unit of measurement is shown. Both values use the same `value_precision` setting.
+Units are rendered intelligently based on what each entity provides. If both entities share the same unit, it appears once after both values: `120 / 80 mmHg`. If the units differ, each is shown next to its own value: `72 °F / 57 %`. If only one entity has a unit, it appears next to that value only.
+
+Both values use the same `value_precision` setting.
 
 If kudos is configured, rules are evaluated against the first entity's value only — no combined or averaged logic is applied. If either entity becomes unavailable, the entire value row falls back to `– / –`.
 
@@ -252,6 +254,16 @@ value_precision: 0
 ```
 
 <img width="248" height="90" alt="Screenshot 2026-04-23 at 1 02 40 PM" src="https://github.com/user-attachments/assets/c61864ce-7f54-4e17-9f73-1fa0eebb4198" />
+
+#### Mixed-unit example
+
+```yaml
+type: custom:pulseline-card
+card_mode: dual
+entity: sensor.temperature
+entity_2: sensor.humidity
+name: Temp / Humidity
+```
 
 ---
 
