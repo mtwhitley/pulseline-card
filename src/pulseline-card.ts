@@ -326,14 +326,30 @@ export class PulseLineCard extends LitElement {
 
     const val1 = this._formatValue(entity.state);
     const val2 = this._formatValue(entity2!.state);
-    const unit = entity.attributes.unit_of_measurement as string | undefined;
+    const unit1 = entity.attributes.unit_of_measurement as string | undefined;
+    const unit2 = entity2!.attributes.unit_of_measurement as string | undefined;
+    const sameUnit = unit1 && unit2 && unit1 === unit2;
 
+    if (sameUnit) {
+      // Same unit: value1 / value2 unit
+      return html`
+        <div class="value-row">
+          <span class="value value-dual">${val1}</span>
+          <span class="value-suffix dual-separator">/</span>
+          <span class="value value-dual">${val2}</span>
+          <span class="value-suffix unit">${unit1}</span>
+        </div>
+      `;
+    }
+
+    // Different or partial units: value1 [unit1] / value2 [unit2]
     return html`
       <div class="value-row">
         <span class="value value-dual">${val1}</span>
+        ${unit1 ? html`<span class="value-suffix unit">${unit1}</span>` : nothing}
         <span class="value-suffix dual-separator">/</span>
         <span class="value value-dual">${val2}</span>
-        ${unit ? html`<span class="value-suffix unit">${unit}</span>` : nothing}
+        ${unit2 ? html`<span class="value-suffix unit">${unit2}</span>` : nothing}
       </div>
     `;
   }
@@ -635,6 +651,27 @@ export class PulseLineCard extends LitElement {
       .value-dual {
         font-size: 28px;
       }
+      @supports (container-type: inline-size) {
+        .text-block {
+          container-type: inline-size;
+        }
+        .value {
+          font-size: clamp(26px, 7cqi, 32px);
+        }
+        .value-suffix {
+          font-size: clamp(12px, 3cqi, 14px);
+        }
+        .score-max,
+        .unit {
+          margin-left: clamp(4px, 1.2cqi, 6px);
+        }
+        .dual-separator {
+          margin: 0 clamp(2px, 1cqi, 4px);
+        }
+        .value-dual {
+          font-size: clamp(22px, 6cqi, 28px);
+        }
+      }
       .supporting-row {
         font-size: 13px;
         font-weight: 500;
@@ -683,22 +720,6 @@ export class PulseLineCard extends LitElement {
         padding: 8px 0;
       }
       @media (max-width: 480px) {
-        .value {
-          font-size: 26px;
-        }
-        .value-dual {
-          font-size: 24px;
-        }
-        .value-suffix {
-          font-size: 12px;
-        }
-        .score-max,
-        .unit {
-          margin-left: 4px;
-        }
-        .dual-separator {
-          margin: 0 2px;
-        }
         .content {
           gap: 10px;
         }
