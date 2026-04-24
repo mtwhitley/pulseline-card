@@ -4,7 +4,7 @@ A compact, data-dense custom card for Home Assistant that combines a primary met
 
 PulseLine is designed to present meaningful information in a small footprint while maintaining strong visual balance and clarity.
 
-[screenshot - overview of multiple PulseLine cards in a dashboard]
+<img width="2092" height="1546" alt="Screenshot 2026-04-23 at 10 22 43 PM" src="https://github.com/user-attachments/assets/0d6d7bd5-0b15-4ee1-bf31-80d3ca1f6c7c" />
 
 ---
 
@@ -263,7 +263,10 @@ card_mode: dual
 entity: sensor.temperature
 entity_2: sensor.humidity
 name: Temp / Humidity
+icon: mdi:thermometer-water
 ```
+
+<img width="528" height="196" alt="Screenshot 2026-04-23 at 10 22 21 PM" src="https://github.com/user-attachments/assets/ce21315c-72b7-4ef3-a33c-84177c00c0b1" />
 
 ---
 
