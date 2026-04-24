@@ -6,7 +6,7 @@ PulseLine is designed to present meaningful information in a small footprint whi
 
 Designed for dashboards where space is limited but context still matters.
 
-<img src="assets/preview.png" width="600">
+<img src="https://raw.githubusercontent.com/mtwhitley/pulseline-card/main/assets/preview.png" width="600">
 
 ---
 
