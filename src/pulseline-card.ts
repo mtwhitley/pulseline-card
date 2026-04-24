@@ -273,10 +273,25 @@ export class PulseLineCard extends LitElement {
     return parseFloat(num.toFixed(precision));
   }
 
+  private _isNumericState(rawState: string): boolean {
+    const trimmed = rawState.trim();
+    if (trimmed === "") return false;
+    return !isNaN(Number(trimmed));
+  }
+
   private _formatValue(rawState: string): string {
     const num = this._normalizeNumeric(rawState);
-    if (isNaN(num)) return rawState;
+    if (isNaN(num)) return this._formatNonNumeric(rawState);
     return num.toFixed(this._config.value_precision ?? 0);
+  }
+
+  private _formatNonNumeric(rawState: string): string {
+    const cleaned = rawState.replace(/_/g, " ").trim();
+    if (cleaned === "") return "–";
+    return cleaned.replace(/\S+/g, (word) => {
+      if (word === word.toUpperCase()) return word;
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    });
   }
 
   private _renderValueRow(entity: HassEntity): TemplateResult {
@@ -289,13 +304,22 @@ export class PulseLineCard extends LitElement {
     }
 
     const formatted = this._formatValue(entity.state);
+    const numeric = this._isNumericState(entity.state);
     const displayStyle = this._config.display_style || "unit";
 
-    if (displayStyle === "score") {
+    if (displayStyle === "score" && numeric) {
       return html`
         <div class="value-row">
           <span class="value">${formatted}</span>
           <span class="value-suffix score-max">/ ${this._config.score_max}</span>
+        </div>
+      `;
+    }
+
+    if (!numeric) {
+      return html`
+        <div class="value-row">
+          <span class="value value-text">${formatted}</span>
         </div>
       `;
     }
@@ -332,16 +356,20 @@ export class PulseLineCard extends LitElement {
 
     const val1 = this._formatValue(entity.state);
     const val2 = this._formatValue(entity2!.state);
-    const unit1 = this._getUnit(entity);
-    const unit2 = this._getUnit(entity2!);
+    const num1 = this._isNumericState(entity.state);
+    const num2 = this._isNumericState(entity2!.state);
+    const unit1 = num1 ? this._getUnit(entity) : undefined;
+    const unit2 = num2 ? this._getUnit(entity2!) : undefined;
     const sharedUnit = unit1 !== undefined && unit2 !== undefined && unit1 === unit2;
+    const cls1 = num1 ? "value value-dual" : "value value-dual value-text";
+    const cls2 = num2 ? "value value-dual" : "value value-dual value-text";
 
     return html`
       <div class="value-row">
-        <span class="value value-dual">${val1}</span>
+        <span class="${cls1}">${val1}</span>
         ${!sharedUnit && unit1 !== undefined ? html`<span class="value-suffix unit">${unit1}</span>` : nothing}
         <span class="value-suffix dual-separator">/</span>
-        <span class="value value-dual">${val2}</span>
+        <span class="${cls2}">${val2}</span>
         ${!sharedUnit && unit2 !== undefined ? html`<span class="value-suffix unit">${unit2}</span>` : nothing}
         ${sharedUnit ? html`<span class="value-suffix unit">${unit1}</span>` : nothing}
       </div>
@@ -645,6 +673,10 @@ export class PulseLineCard extends LitElement {
       .value-dual {
         font-size: 28px;
       }
+      .value-text {
+        font-size: 24px;
+        font-weight: 600;
+      }
       .supporting-row {
         font-size: 13px;
         font-weight: 500;
@@ -696,6 +728,9 @@ export class PulseLineCard extends LitElement {
         .value {
           font-size: 30px;
         }
+        .value-text {
+          font-size: 22px;
+        }
         .value-dual {
           font-size: 26px;
         }
@@ -713,6 +748,9 @@ export class PulseLineCard extends LitElement {
       @media (max-width: 480px) {
         .value {
           font-size: 26px;
+        }
+        .value-text {
+          font-size: 20px;
         }
         .value-dual {
           font-size: 24px;
