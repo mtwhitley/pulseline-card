@@ -82,7 +82,8 @@ export async function fetchDailyBuckets(
           buckets[dayIndex] = stat.mean;
         }
       }
-      return buckets;
+      const validCount = buckets.filter((v) => v !== null).length;
+      if (validCount >= 2) return buckets;
     }
   } catch {
     // Fall through to history fallback
