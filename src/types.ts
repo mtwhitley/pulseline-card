@@ -20,6 +20,7 @@ export interface FooterRowConfig {
 export interface PulseLineCardConfig {
   type: string;
   entity: string;
+  _preview?: boolean;
   entity_2?: string;
   card_mode?: "single" | "dual";
   name?: string;

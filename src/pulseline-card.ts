@@ -34,13 +34,18 @@ export class PulseLineCard extends LitElement {
   private _fetchInProgress = false;
 
   public static getStubConfig(): Record<string, unknown> {
-    return { entity: "sensor.temperature" };
+    return { entity: "sensor.temperature", _preview: true };
   }
 
   public setConfig(config: PulseLineCardConfig): void {
     if (!config || typeof config !== "object") {
       throw new Error("Invalid configuration: config must be an object");
     }
+    if (config._preview) {
+      this._config = config;
+      return;
+    }
+
     if (!config.entity || typeof config.entity !== "string") {
       throw new Error("Invalid configuration: 'entity' is required");
     }
@@ -600,9 +605,53 @@ export class PulseLineCard extends LitElement {
     `;
   }
 
+  // --- Preview ---
+
+  private _shouldShowPreview(): boolean {
+    if (!this._config) return true;
+    if (this._config._preview) return true;
+    return false;
+  }
+
+  private _renderPreview(): TemplateResult {
+    const accent = "#3B82F6";
+    const mockValues = [6100, 7200, 6900, 7600, 8100, 7900, 8243];
+
+    return html`
+      <ha-card>
+        <div class="content">
+          <div
+            class="icon-badge"
+            style="background: ${accent}33; color: ${accent};"
+          >
+            <ha-icon .icon=${"mdi:shoe-print"}></ha-icon>
+          </div>
+          <div class="text-block">
+            <div class="title-row">Steps</div>
+            <div class="value-row">
+              <span class="value">8,243</span>
+              <span class="value-suffix unit">steps</span>
+            </div>
+            <div class="supporting-row kudos" style="color: ${accent};">
+              <div class="kudos-badge" style="background: ${accent}33; color: ${accent};">
+                <ha-icon .icon=${"mdi:shoe-print"}></ha-icon>
+              </div>
+              <span>Great Job</span>
+            </div>
+          </div>
+        </div>
+        ${this._renderSparkline(mockValues, accent, false)}
+      </ha-card>
+    `;
+  }
+
   // --- Main render ---
 
   protected render(): TemplateResult {
+    if (this._shouldShowPreview()) {
+      return this._renderPreview();
+    }
+
     if (!this._config || !this.hass) {
       return html``;
     }
