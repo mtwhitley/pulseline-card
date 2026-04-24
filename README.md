@@ -363,7 +363,7 @@ cards:
     entity: sensor.steps
 ```
 
-<img width="1169" height="800" alt="" src="https://github.com/user-attachments/assets/e0fcee09-796e-40ca-a168-f3fa83e24038" />
+<img width="800" alt="" src="https://github.com/user-attachments/assets/e0fcee09-796e-40ca-a168-f3fa83e24038" />
 
 ---
 
