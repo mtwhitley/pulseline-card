@@ -89,7 +89,7 @@ export async function fetchDailyBuckets(
     // Fall through to history fallback
   }
 
-  // Fallback: history with daily averaging
+  // Fallback: history with latest-per-day bucketing
   return fetchDailyFromHistory(hass, entityId, days, startDate);
 }
 
@@ -111,21 +111,16 @@ async function fetchDailyFromHistory(
 
     const entries = parseNumericEntries(result[entityId] || []);
     const buckets: (number | null)[] = new Array(days).fill(null);
-    const sums: number[] = new Array(days).fill(0);
-    const counts: number[] = new Array(days).fill(0);
+    const latestTs: number[] = new Array(days).fill(-Infinity);
 
     for (const entry of entries) {
       const diffMs = entry.timestamp - startDate.getTime();
       const dayIndex = Math.floor(diffMs / (24 * 60 * 60 * 1000));
       if (dayIndex >= 0 && dayIndex < days) {
-        sums[dayIndex] += entry.value;
-        counts[dayIndex]++;
-      }
-    }
-
-    for (let i = 0; i < days; i++) {
-      if (counts[i] > 0) {
-        buckets[i] = sums[i] / counts[i];
+        if (entry.timestamp > latestTs[dayIndex]) {
+          latestTs[dayIndex] = entry.timestamp;
+          buckets[dayIndex] = entry.value;
+        }
       }
     }
 
