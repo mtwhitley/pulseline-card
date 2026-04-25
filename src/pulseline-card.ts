@@ -34,16 +34,12 @@ export class PulseLineCard extends LitElement {
   private _fetchInProgress = false;
 
   public static getStubConfig(): Record<string, unknown> {
-    return { entity: "sensor.temperature", _preview: true };
+    return { entity: "sensor.pulseline_preview" };
   }
 
   public setConfig(config: PulseLineCardConfig): void {
     if (!config || typeof config !== "object") {
       throw new Error("Invalid configuration: config must be an object");
-    }
-    if (config._preview) {
-      this._config = config;
-      return;
     }
 
     if (!config.entity || typeof config.entity !== "string") {
@@ -609,7 +605,13 @@ export class PulseLineCard extends LitElement {
 
   private _shouldShowPreview(): boolean {
     if (!this._config) return true;
-    if (this._config._preview) return true;
+    if (
+      this._config.entity === "sensor.pulseline_preview" &&
+      this.hass &&
+      !this.hass.states["sensor.pulseline_preview"]
+    ) {
+      return true;
+    }
     return false;
   }
 
