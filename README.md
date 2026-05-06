@@ -204,7 +204,7 @@ footer_row:
 
 Delta shows the net change across a time window, not just the difference from the previous value. It is calculated as the last value minus the first value in the selected data set.
 
-The data set depends on the footer configuration. When a `sparkline_values` footer is present, delta uses the same values shown in that sparkline — the last N values, controlled by `x_values` (default 7). When a `sparkline_days` footer is present, delta uses the same daily bucket averages, covering up to 7 days.
+The data set depends on the footer configuration. When a `sparkline_values` footer is present, delta uses the same values shown in that sparkline — the last N values, controlled by `x_values` (default 7). When a `sparkline_days` footer is present, delta uses the same daily buckets shown in the sparkline, covering up to 7 days.
 
 When no footer is configured, delta uses a fixed internal window of the 7 most recent distinct values. This is not configurable without adding a footer.
 
@@ -231,7 +231,7 @@ supporting_row:
 
 ### Sparkline - Recent Days
 
-The recent days sparkline shows a 7-day trend using daily aggregated averages. Each point represents the mean value for that calendar day, derived from recorder statistics when available and falling back to raw state history otherwise.
+The recent days sparkline shows a 7-day trend with one point per day, using Home Assistant daily statistics when available and falling back to raw state history otherwise. In the history fallback, each day's point is the latest numeric value recorded that day, which keeps daily cumulative sensors like steps aligned with the displayed current value.
 
 Missing days are handled gracefully: interior gaps skip the dot but the line connects across, while leading or trailing gaps simply shorten the visible trend. Day labels appear below with the current day highlighted in the accent color.
 
